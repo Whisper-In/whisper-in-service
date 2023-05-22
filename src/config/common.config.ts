@@ -1,0 +1,2 @@
+export const MAX_MESSAGES_PER_LOAD = 50;
+export const MAX_PREVIEW_CHAT_MESSAGE_LENGTH = 100

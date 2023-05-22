@@ -1,0 +1,1 @@
+export const CHAT_COMPLETION_TEMP = 0.6;

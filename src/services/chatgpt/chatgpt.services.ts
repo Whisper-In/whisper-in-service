@@ -32,22 +32,18 @@ export const getChatCompletion = async (
         {
           role: "user",
           content: aiProfile.characterPrompt,
-        },        
-        ...prevMessages,
-        {
-          role: "user",
-          content: 'Stay in character.',
         },
+        ...prevMessages,        
         {
           role: "user",
-          content: message,
-        },        
+          content: `${message}. Stay in character.`,
+        },
       ],
       temperature: CHAT_COMPLETION_TEMP,
     });
 
     return completion.data.choices[0].message;
-  } catch (error: any) {    
+  } catch (error: any) {
     throw error.message;
   }
 };

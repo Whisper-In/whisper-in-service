@@ -5,21 +5,21 @@ import { AIProfile } from "../../models/ai/ai-profile.model.js";
 import { UserProfile } from "../../models/user/user-profile.model.js";
 import { isFulfilled } from "../../utils/promise.js";
 
-export const getUserChats = async (profileId: string) => {
+export const getUserChats = async (userId: string) => {
   try {
-    const profileObjectId = new mongo.ObjectId(profileId);
+    const userObjectId = new mongo.ObjectId(userId);
     const body = await Chat.find({
-      profiles: { $elemMatch: { profile: profileObjectId } },
+      profiles: { $elemMatch: { profile: userObjectId } },
     }).populate([
       {
         path: "profiles",
         populate: {
           path: "profile",
-          match: { _id: { $ne: profileObjectId } },
+          match: { _id: { $ne: userObjectId } },
         },
       }
     ]);
-
+    
     return body;
   } catch (error) {
     throw error;

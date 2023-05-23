@@ -1,5 +1,4 @@
 import { RequestHandler } from "express";
-import { MAX_PREVIEW_CHAT_MESSAGE_LENGTH } from "../../config/common.config.js";
 import * as chatDTOs from "../../dtos/chat/chat.dtos.js";
 import { AIProfile } from "../../models/ai/ai-profile.model.js";
 import { IChatProfile } from "../../models/chat/chat.model.js";
@@ -22,14 +21,6 @@ export const getUserChats: RequestHandler = async (req, res, next) => {
             isAI: p.profileModel == AIProfile.modelName,
             avatar: p.profile.avatar,
           })),
-        // lastChatMessage: {
-        //   message: result.lastChatMessage.message.slice(
-        //     0,
-        //     MAX_PREVIEW_CHAT_MESSAGE_LENGTH
-        //   ),
-        //   createdAt: result.lastChatMessage.createdAt,
-        //   updatedAt: result.lastChatMessage.updatedAt,
-        // },
       };
     });
 

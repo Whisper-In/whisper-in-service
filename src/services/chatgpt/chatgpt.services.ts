@@ -36,7 +36,7 @@ export const getChatCompletion = async (
         ...prevMessages,        
         {
           role: "user",
-          content: `${message}. Stay in character.`,
+          content: `${message}. (Stay in character).`,
         },
       ],
       temperature: CHAT_COMPLETION_TEMP,

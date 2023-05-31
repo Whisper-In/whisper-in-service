@@ -7,6 +7,7 @@ interface IAIProfile {
   avatar?: string;
   baseCharacterPrompt: string;
   characterPrompt: string;
+  isDefault: boolean
 }
 
 const AIProfileSchema = new Schema<IAIProfile>(
@@ -14,6 +15,7 @@ const AIProfileSchema = new Schema<IAIProfile>(
     name: String,
     avatar: { type: String, required: false },
     baseCharacterPrompt: String,
+    isDefault: Boolean
   },
   {
     timestamps: true,

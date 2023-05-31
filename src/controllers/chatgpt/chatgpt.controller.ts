@@ -16,7 +16,7 @@ export const getChatCompletion: RequestHandler = async (req, res, next) => {
     const today = new Date();
     let replyMessage = chatGPTResult?.content ?? "Sorry. Could you please repeat that?"; //TODO: Random message
 
-    res.status(200).send({
+    return res.status(200).send({
       message: replyMessage,
       sender: aiProfileId,
       createdAt: today,
@@ -25,7 +25,7 @@ export const getChatCompletion: RequestHandler = async (req, res, next) => {
   } catch (error) {
     const today = new Date();
 
-    res.status(200).send({
+    return res.status(200).send({
       message: "Sorry. Could you please repeat that?",
       sender: aiProfileId,
       createdAt: today,

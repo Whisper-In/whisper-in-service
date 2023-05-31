@@ -1,6 +1,15 @@
 import express from "express";
-import { getUserChatHistory, getUserProfile } from "../../controllers/user/user.controller.js";
+import passport from "passport";
+import {
+  getUserChatHistory,
+  getUserProfile,
+} from "../../controllers/user/user.controller.js";
+import { passpotJWTMiddleware } from "../../middlewares/passportJWTMiddleware.js";
 
 const router = express.Router();
 
-router.route("/:profileId").get(getUserProfile);
+router.get(
+  "/:profileId",
+  passpotJWTMiddleware,
+  getUserProfile
+);

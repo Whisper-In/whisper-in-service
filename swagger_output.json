@@ -67,6 +67,30 @@
           }
         }
       }
+    },
+    "/auth/google/login": {
+      "get": {
+        "tags": [
+          "Google"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/auth/google/callback": {
+      "get": {
+        "tags": [
+          "Google"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
     }
   }
 }

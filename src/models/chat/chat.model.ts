@@ -8,7 +8,7 @@ export interface IChatProfile {
   profileModel: any;
 }
 
-interface IChat {
+export interface IChat {
   profiles: IChatProfile[];  
   createdAt?: Date;
   updatedAt?: Date;

@@ -1,12 +1,13 @@
 import passport from "passport";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 import { UserProfile } from "../../models/user/user-profile.model.js";
+import { jwtSecret } from "../../config/app.config.js";
 
 passport.use(
   new JWTStrategy(
     {
       jwtFromRequest: ExtractJwt.fromHeader("x-auth-token"),
-      secretOrKey: <string>process.env.JWT_SECRET,
+      secretOrKey: jwtSecret,
     },
     async (payload, done) => {
       try {

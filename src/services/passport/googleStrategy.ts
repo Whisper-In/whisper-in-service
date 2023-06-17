@@ -7,14 +7,15 @@ import {
 import { AIProfile } from "../../models/ai/ai-profile.model.js";
 import { Chat, IChat } from "../../models/chat/chat.model.js";
 import { UserProfile } from "../../models/user/user-profile.model.js";
-import { mongo } from "mongoose";
+import { googleCallbackURL, googleClientID, googleClientSecret } from "../../config/app.config.js";
+import { IUserAISubscription, SubscriptionStatus, UserAISubscription } from "../../models/user/user-ai-subscription.model.js";
 
 passport.use(
   new GoogleStrategy(
     {
-      clientID: <string>process.env.GOOGLE_CLIENT_ID,
-      clientSecret: <string>process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: <string>process.env.GOOGLE_CALLBACK_URL,
+      clientID: googleClientID,
+      clientSecret: googleClientSecret,
+      callbackURL: googleCallbackURL,
     },
     async (
       accessToken: string,
@@ -41,6 +42,7 @@ passport.use(
           googleId: profile.id,
           email: profile.email,
           name: profile.displayName,
+          userName: (<string>profile.displayName).toLocaleLowerCase().replace(" ", "_"),
           avatar: profile.picture,
           gender: profile.gender,
         }).save();
@@ -64,6 +66,15 @@ passport.use(
               ],
             }))
           );
+          
+          UserAISubscription.create(
+            defaultAiProfiles.map<IUserAISubscription>((aiProfile) => ({
+              aiProfileId: aiProfile.id,
+              tier: 0,
+              status: SubscriptionStatus.SUCCEEDED.toString(),
+              userId: newUser.id
+            }))
+          )
         }
 
         done(null, newUser);

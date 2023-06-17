@@ -1,11 +1,11 @@
 import { Schema, model, Model, ObjectId } from "mongoose";
 import jwt from "jsonwebtoken";
-
-const jwtSecret = <string>process.env.JWT_SECRET;
+import { jwtSecret } from "../../config/app.config.js";
 
 export interface IUserProfile {
   _id: ObjectId;
-  name: string;  
+  name: string;
+  userName: string;
   birthday: Date;
   gender: string;
   avatar?: string;
@@ -22,6 +22,7 @@ export type UserProfileModel = Model<IUserProfile, {}, IUserProfileMethods>;
 export const UserProfileSchema = new Schema<IUserProfile, UserProfileModel, IUserProfileMethods>(
   {
     name: String,
+    userName: String,
     birthday: Date,
     gender: String,
     avatar: { type: String, required: false },
@@ -34,7 +35,7 @@ export const UserProfileSchema = new Schema<IUserProfile, UserProfileModel, IUse
 UserProfileSchema.methods.generateJWT = function () {
   const token = jwt.sign({
     id: this._id,
-    emai: this!.email  
+    emai: this!.email
   }, jwtSecret)
 
   return token;

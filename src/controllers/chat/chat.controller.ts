@@ -1,7 +1,6 @@
 import { RequestHandler } from "express";
 import * as chatDTOs from "../../dtos/chat/chat.dtos.js";
 import { AIProfile } from "../../models/ai/ai-profile.model.js";
-import { IChatProfile } from "../../models/chat/chat.model.js";
 import * as chatService from "../../services/chat/chat.services.js";
 
 export const getUserChats: RequestHandler = async (req, res, next) => {
@@ -31,6 +30,7 @@ export const getUserChats: RequestHandler = async (req, res, next) => {
   }
 };
 
+/*
 export const getChatMessages: RequestHandler = async (req, res, next) => {
   try {
     const { chatId } = req.params;
@@ -72,3 +72,18 @@ export const insertNewChatMessage: RequestHandler = async (req, res, next) => {
     return res.status(400).json({ error });
   }
 };
+*/
+
+export const createNewChat: RequestHandler = async (req, res, next) => {
+  const { userId, aiProfileId } = req.body;
+
+  try {    
+    const newChat = await chatService.createNewChat(userId, aiProfileId);
+
+    res.status(201).send({
+      chatId: newChat.id
+    });
+  } catch (error) {
+    res.status(400).json({ error });
+  }
+}

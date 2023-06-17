@@ -1,5 +1,5 @@
 import passport from "passport";
 
-export const passpotJWTMiddleware = passport.authenticate("jwt", {
+export const passportJWTMiddleware = passport.authenticate("jwt", {
   session: false,
 });

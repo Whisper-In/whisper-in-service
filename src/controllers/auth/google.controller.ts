@@ -5,6 +5,7 @@ import {
   IUserProfile,
   IUserProfileMethods,
 } from "../../models/user/user-profile.model.js";
+import { appScheme } from "../../config/app.config.js";
 
 export const googleCallback: RequestHandler = async (req, res, next) => {
   const reqUser = <IUserProfile & IUserProfileMethods>req.user!;
@@ -19,6 +20,6 @@ export const googleCallback: RequestHandler = async (req, res, next) => {
   };  
 
   res.redirect(
-    `${process.env.APP_SCHEME}://login?user=${JSON.stringify(user)}&token=${jwtToken}`
+    `${appScheme}://login?user=${JSON.stringify(user)}&token=${jwtToken}`
   );
 };

@@ -19,7 +19,7 @@ export const getUserChats = async (userId: string) => {
         },
       }
     ]);
-    
+
     return body;
   } catch (error) {
     throw error;
@@ -40,7 +40,22 @@ export const getChatMessages = async (chatId: string) => {
   }
 };
 
-export const createNewChat = async (contactId: string) => {};
+export const createNewChat = async (userId: string, aiProfileId: string) => {
+  try {
+    const newChat = new Chat({
+      profiles: [
+        { profile: userId, profileModel: UserProfile.modelName },
+        { profile: aiProfileId, profileModel: AIProfile.modelName }
+      ]
+    });
+
+    await newChat.save();
+
+    return newChat;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const insertNewChatMessage = async (
   chatId: string,
@@ -63,7 +78,7 @@ export const insertNewChatMessage = async (
       senderModel = AIProfile.modelName!;
     } else {
       throw "Sender profile id provided does not exists.";
-    }    
+    }
 
     const newChatMessage = new ChatMessage({
       chat: new mongo.ObjectId(chatId),

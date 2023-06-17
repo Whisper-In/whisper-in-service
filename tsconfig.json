@@ -8,8 +8,9 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    "module": "NodeNext"
+    "module": "NodeNext",
   },
+  "exclude": ["scripts", "datasets"],
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node",

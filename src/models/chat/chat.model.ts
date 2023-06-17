@@ -1,7 +1,6 @@
 import { Schema, model, Types } from "mongoose";
 import { AIProfile } from "../ai/ai-profile.model.js";
 import { UserProfile } from "../user/user-profile.model.js";
-import { ChatMessage, IChatMessage } from "./chat-message.model.js";
 
 export interface IChatProfile {
   profile: Types.ObjectId;
@@ -9,7 +8,7 @@ export interface IChatProfile {
 }
 
 export interface IChat {
-  profiles: IChatProfile[];  
+  profiles: IChatProfile[];
   createdAt?: Date;
   updatedAt?: Date;
 }

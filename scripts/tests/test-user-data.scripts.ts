@@ -1,5 +1,4 @@
 import { connect } from "mongoose";
-import dotenv from "dotenv";
 import { UserProfile } from "../../src/models/user/user-profile.model.js";
 import { AIProfile } from "../../src/models/ai/ai-profile.model.js";
 import { Chat } from "../../src/models/chat/chat.model.js";
@@ -10,7 +9,6 @@ import {
 import { faker } from "@faker-js/faker";
 import { exit } from "process";
 
-dotenv.config();
 
 const insertTestUserProfile = async () => {
   try {

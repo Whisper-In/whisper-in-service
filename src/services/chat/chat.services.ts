@@ -42,6 +42,12 @@ export const getChatMessages = async (chatId: string) => {
 
 export const createNewChat = async (userId: string, aiProfileId: string) => {
   try {
+    const existingChat = await Chat.findOne({ 'profiles.profile': { $all: [userId, aiProfileId] } });
+
+    if (existingChat) {
+      return existingChat;
+    }
+
     const newChat = new Chat({
       profiles: [
         { profile: userId, profileModel: UserProfile.modelName },

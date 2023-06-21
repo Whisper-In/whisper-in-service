@@ -8,6 +8,7 @@ export interface IProfileTierDto {
 export interface IProfileDto {
     id: string;
     name: string;
+    aboutMe?:string;
     email?: string;
     userName: string;
     avatar?: string;

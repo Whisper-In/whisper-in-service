@@ -71,7 +71,7 @@ passport.use(
             defaultAiProfiles.map<IUserAISubscription>((aiProfile) => ({
               aiProfileId: aiProfile.id,
               tier: 0,
-              status: SubscriptionStatus.SUCCEEDED.toString(),
+              status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED],
               userId: newUser.id
             }))
           )

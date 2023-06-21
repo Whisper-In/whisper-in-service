@@ -5,24 +5,27 @@ import { UserProfile } from "./user-profile.model.js";
 export enum SubscriptionStatus {
     PENDING,
     SUCCEEDED,
-    FAILED
+    FAILED,
+    DELETED
 }
 
 export interface IUserAISubscription {
     userId: Types.ObjectId;
     aiProfileId: Types.ObjectId;
     tier: number;
-    expiryDate?: Date;
+    stripeSubscriptionId?: string;
     status: string;
 }
 
-const UserAISubscriptionSchema = new Schema<IUserAISubscription>({
-    userId: { type: Schema.Types.ObjectId, refPath: UserProfile.modelName },
-    aiProfileId: { type: Schema.Types.ObjectId, refPath: AIProfile.modelName },
-    tier: Number,
-    status: String,
-    expiryDate: { type: Date, required: false }
-});
+const UserAISubscriptionSchema = new Schema<IUserAISubscription>(
+    {
+        userId: { type: Schema.Types.ObjectId, refPath: UserProfile.modelName },
+        aiProfileId: { type: Schema.Types.ObjectId, refPath: AIProfile.modelName },
+        tier: Number,
+        status: String,
+        stripeSubscriptionId: { type: String, required: false }
+    },
+    { timestamps: true });
 
 const UserAISubscription = model("UserAiSubscription", UserAISubscriptionSchema);
 

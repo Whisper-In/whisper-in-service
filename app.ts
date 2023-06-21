@@ -19,7 +19,7 @@ initPassport(app);
 
 app.use(cors());
 
-app.post("/payment/payment-webhook", express.raw({ type: "application/json" }), paymentWebhook);
+app.post("/payment/webhook", express.raw({ type: "application/json" }), paymentWebhook);
 
 app.use(express.json());
 

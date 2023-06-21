@@ -9,9 +9,22 @@ export const createPaymentSheet: RequestHandler = async (req, res, next) => {
         const metadata = req.body.metadata;
         let customerStripeId = req.body?.customerStripeId;
 
-        const paymentIntent = await paymentService.createPaymentSheet(customerStripeId, amount, metadata);
+        const paymentIntent = await paymentService.createPaymentSheet({ customerStripeId, amount, metadata });
 
         res.json(paymentIntent);
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ error });
+    }
+}
+
+export const cancelSubscription: RequestHandler = async (req, res, next) => {
+    try {
+        const stripeSubscriptionId = req.body.stripeSubscriptionId;
+
+        const deletedSubscription = await paymentService.cancelSubscription(stripeSubscriptionId);
+
+        res.json(deletedSubscription);
     } catch (error) {
         console.log(error);
         return res.status(400).json({ error });
@@ -33,23 +46,30 @@ export const paymentWebhook: RequestHandler = async (req, res, next) => {
     const paymentIntent = <any>event.data.object;
 
     const metadata = paymentIntent.metadata;
-    const userId = metadata.userId;
-    const aiProfileId = metadata.aiProfileId;
+    const userId = metadata?.userId;
+    const aiProfileId = metadata?.aiProfileId;
 
-    if(!userId) {
-        console.log("User Id not found in metadata.");
+    if (!userId) {
+        console.log(event.type, "User Id not found in metadata.");
+        return;
     }
 
-    if(!aiProfileId) {
-        console.log("AI Profile Id not found in metadata.");
+    if (!aiProfileId) {
+        console.log(event.type, "AI Profile Id not found in metadata.");
+        return;
     }
 
     switch (event.type) {
+        case 'customer.subscription.created':
         case 'payment_intent.succeeded':
+            console.log(paymentIntent)
             userService.updateUserAISubscription(userId, aiProfileId, SubscriptionStatus.SUCCEEDED);
             break;
         case 'payment_intent.payment_failed':
             userService.updateUserAISubscription(userId, aiProfileId, SubscriptionStatus.FAILED);
+            break;
+        case ' customer.subscription.deleted':
+            userService.updateUserAISubscription(userId, aiProfileId, SubscriptionStatus.DELETED);
             break;
         default:
             console.log(`Unhandled event type ${event.type}`)

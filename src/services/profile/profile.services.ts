@@ -19,7 +19,7 @@ export const getProfile = async (aiProfileId: string, userId: string, isAI: bool
                     $and: [
                         { aiProfileId },
                         { userId },
-                        { status: SubscriptionStatus.SUCCEEDED.toString() },
+                        { status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED] },
                         { $or: [{ expiryDate: { $gte: today } }, { expiryDate: { $exists: false } }] }
                     ]});                
 
@@ -28,6 +28,7 @@ export const getProfile = async (aiProfileId: string, userId: string, isAI: bool
                     name: rawResult.name,
                     avatar: rawResult.avatar,
                     userName: rawResult.userName,
+                    aboutMe: rawResult.aboutMe,
                     priceTiers: rawResult.priceTiers,
                     isSubscribed: subscription != null
                 }
@@ -40,7 +41,8 @@ export const getProfile = async (aiProfileId: string, userId: string, isAI: bool
                     id: rawResult.id,
                     name: rawResult.name,
                     avatar: rawResult.avatar,
-                    userName: rawResult.userName
+                    userName: rawResult.userName,
+                    aboutMe: rawResult.aboutMe
                 }
             }
         }

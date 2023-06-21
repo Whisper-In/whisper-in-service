@@ -14,5 +14,4 @@ export const stripePublishableKey = <string>process.env.STRIPE_PUBLISHABLE_KEY;
 export const stripeSecretKey = <string>process.env.STRIPE_SECRET_KEY;
 export const stripeCurrency = <string>process.env.STRIPE_CURRENCY;
 export const stripeWebhookSecret = <string>process.env.STRIPE_WEBHOOK_SECRET;
-
-console.log(googleClientSecret)
+export const stripeProductId = <string>process.env.STRIPE_SUBSCRIPTION_PRODUCT_ID;

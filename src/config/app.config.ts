@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 
-dotenv.config({ path: process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env' });
+dotenv.config({ path: process.env.NODE_ENV != 'production' ? `.env.${process.env.NODE_ENV}` : '.env' });
 
 export const port = process.env.PORT;
 export const mongoDBConnectionString = <string>process.env.MONGODB_CONNECTION_STRING;
@@ -15,3 +15,5 @@ export const stripeSecretKey = <string>process.env.STRIPE_SECRET_KEY;
 export const stripeCurrency = <string>process.env.STRIPE_CURRENCY;
 export const stripeWebhookSecret = <string>process.env.STRIPE_WEBHOOK_SECRET;
 export const stripeProductId = <string>process.env.STRIPE_SUBSCRIPTION_PRODUCT_ID;
+export const elevenLabsAPIKey = <string>process.env.ELEVENLABS_API_KEY;
+export const elevenLabsBaseURL = <string>process.env.ELEVENLABS_BASE_URL;

@@ -1,5 +1,4 @@
 import express from "express";
-import passport from "passport";
 import { getChatCompletion } from "../../controllers/chatgpt/chatgpt.controller.js";
 import { passportJWTMiddleware } from "../../middlewares/passportJWTMiddleware.js";
 import { chatGPTSubscriptionMiddleware } from "../../middlewares/chatGPTSubscriptionMiddleware.js";

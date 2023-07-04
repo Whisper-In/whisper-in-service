@@ -7,6 +7,7 @@ const router = express.Router();
 router.get(
   "/login",
   passport.authenticate("google", { scope: ["profile", "email"] })
+  //#swagger.tags = ['Google']
 );
 
 router.get(

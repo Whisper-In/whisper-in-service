@@ -1,7 +1,5 @@
 import { RequestHandler } from "express";
 import * as chatGPTService from "../../services/chatgpt/chatgpt.services.js";
-import * as chatService from "../../services/chat/chat.services.js";
-import { IUserChatMessageDto } from "../../dtos/chat/chat.dtos.js";
 
 export const getChatCompletion: RequestHandler = async (req, res, next) => {
   const { aiProfileId, message, prevMessages } = req.body;
@@ -12,7 +10,6 @@ export const getChatCompletion: RequestHandler = async (req, res, next) => {
       prevMessages
     );
 
-    let result: IUserChatMessageDto;
     const today = new Date();
     let replyMessage = chatGPTResult?.content ?? "Sorry. Could you please repeat that?"; //TODO: Random message
 

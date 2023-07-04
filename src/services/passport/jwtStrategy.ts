@@ -6,7 +6,7 @@ import { jwtSecret } from "../../config/app.config.js";
 passport.use(
   new JWTStrategy(
     {
-      jwtFromRequest: ExtractJwt.fromHeader("x-auth-token"),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: jwtSecret,
     },
     async (payload, done) => {

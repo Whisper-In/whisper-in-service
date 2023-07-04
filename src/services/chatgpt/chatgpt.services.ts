@@ -1,11 +1,6 @@
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
 import { openAIApiKey } from "../../config/app.config.js";
 import { AIProfile } from "../../models/ai/ai-profile.model.js";
-import { ChatMessage } from "../../models/chat/chat-message.model.js";
-import { mongo } from "mongoose";
-import { isFulfilled } from "../../utils/promise.js";
-import { query } from "express";
-import { UserProfile } from "../../models/user/user-profile.model.js";
 import { CHAT_COMPLETION_TEMP } from "../../config/chatgpt.config.js";
 
 const configuration = new Configuration({

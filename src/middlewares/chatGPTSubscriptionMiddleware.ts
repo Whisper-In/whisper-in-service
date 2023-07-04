@@ -9,8 +9,7 @@ export const chatGPTSubscriptionMiddleware: RequestHandler = async (req, res, ne
         const user: any = req.user;
         const userId = user["_id"];
 
-        const subscription = await UserAISubscription.exists({ userId, aiProfileId, status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED] });
-        console.log(subscription);
+        const subscription = await UserAISubscription.exists({ userId, aiProfileId, status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED] });        
 
         if (subscription != null) {
             next();

@@ -6,10 +6,11 @@ import chatGPTRouter from "./src/routes/chatgpt/chatgpt.routes.js";
 import chatRouter from "./src/routes/chat/chat.routes.js";
 import cors from "cors";
 import swaggerOutput from "./swagger_output.json" assert { type: "json" };
-import googleRoute from "./src/routes/auth/google.routes.js";
-import profileRoutes from "./src/routes/profile/profile.routes.js";
-import paymentRoutes from "./src/routes/payment/payment.routes.js";
-import userRoutes from "./src/routes/user/user.routes.js";
+import googleRouter from "./src/routes/auth/google.routes.js";
+import profileRouter from "./src/routes/profile/profile.routes.js";
+import paymentRouter from "./src/routes/payment/payment.routes.js";
+import userRouter from "./src/routes/user/user.routes.js";
+import elevenLabsRouter from "./src/routes/elevenlabs/elevenlabs.routes.js";
 import { initPassport } from "./src/services/passport/initPassport.js";
 import { paymentWebhook } from "./src/controllers/payment/payment.controller.js";
 
@@ -19,44 +20,76 @@ initPassport(app);
 
 app.use(cors());
 
-app.post("/payment/webhook", express.raw({ type: "application/json" }), paymentWebhook);
+app.post(
+  "/payment/webhook",
+  express.raw({ type: "application/json" }),
+  paymentWebhook
+  /* 
+  #swagger.tags = ['Payment']
+  #swagger.security = [{"bearerAuth": []}] 
+  */
+);
 
 app.use(express.json());
 
 app.use(
   "/chats",
   chatRouter
-  //#swagger.tags = ['Chats']
+  /* 
+  #swagger.tags = ['Chats']
+  #swagger.security = [{"bearerAuth": []}] 
+  */
 );
 
 app.use(
   "/chat-gpt",
   chatGPTRouter
-  //#swagger.tags = ['ChatGPT']
+  /* 
+  #swagger.tags = ['ChatGPT']
+  #swagger.security = [{"bearerAuth": []}] 
+  */
+);
+
+app.use(
+  "/eleven-labs",
+  elevenLabsRouter
+  /* 
+  #swagger.tags = ['Eleven Labs']
+  #swagger.security = [{"bearerAuth": []}] 
+  */
 );
 
 app.use(
   "/auth/google",
-  googleRoute
+  googleRouter
   //#swagger.tags = ['Google']
 );
 
 app.use(
   "/profile",
-  profileRoutes
-  //#swagger.tags = ['Profile']
+  profileRouter
+  /* 
+  #swagger.tags = ['Profile']
+  #swagger.security = [{"bearerAuth": []}] 
+  */
 );
 
 app.use(
   "/payment",
-  paymentRoutes
-  //#swagger.tags = ['Payment']
+  paymentRouter
+  /* 
+  #swagger.tags = ['Payment']
+  #swagger.security = [{"bearerAuth": []}] 
+  */
 );
 
 app.use(
   "/user",
-  userRoutes
-  //#swagger.tags = ['Payment']
+  userRouter
+  /* 
+  #swagger.tags = ['User']
+  #swagger.security = [{"bearerAuth": []}] 
+  */
 );
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOutput));
@@ -66,7 +99,7 @@ const start = async () => {
     await connectMongoDB();
 
     app.listen(port, () => {
-      console.log(`Whisper Service listening on port ${port}`);
+      console.log(`Whisper In Service listening on port ${port}`);
     });
   } catch (error) {
     console.error(error);

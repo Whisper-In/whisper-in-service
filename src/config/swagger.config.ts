@@ -1,4 +1,4 @@
-import { Options } from "swagger-jsdoc";
+import { Options, SwaggerDefinition } from "swagger-jsdoc";
 import { port } from "./app.config.js";
 
 export const swaggerOptions: Options = {
@@ -14,6 +14,13 @@ export const swaggerOptions: Options = {
           url: `http://localhost:${port}`,
         },
       ],
+    },
+    securityDefinitions: {
+      bearerAuth: {
+        type: 'apiKey',
+        in: 'header',
+        name: 'Authorization'
+      }
     },
     apis: ["./src/routes/**/*.ts"],
   };

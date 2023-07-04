@@ -18,6 +18,7 @@ interface IAIProfile {
   isDefault: boolean;
   priceTiers: IPriceTier[];
   stripeAccountId?: string;
+  voiceId?: string;
 }
 
 const PriceTierSchema = new Schema<IPriceTier>({
@@ -32,9 +33,10 @@ const AIProfileSchema = new Schema<IAIProfile>(
     avatar: { type: String, required: false },
     aboutMe: { type: String, required: false },
     baseCharacterPrompt: String,
-    isDefault: Boolean,    
+    isDefault: Boolean,
     priceTiers: { type: [PriceTierSchema], required: false },
-    stripeAccountId: String
+    stripeAccountId: { type: String, required: false },
+    voiceId: { type: String, required: false }
   },
   {
     timestamps: true,

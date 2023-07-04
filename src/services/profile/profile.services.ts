@@ -1,7 +1,6 @@
 import { Types } from "mongoose";
 import { IProfileDto } from "../../dtos/profile/profile.dtos.js";
 import { AIProfile } from "../../models/ai/ai-profile.model.js";
-import { Chat } from "../../models/chat/chat.model.js";
 import { UserProfile } from "../../models/user/user-profile.model.js";
 import { SubscriptionStatus, UserAISubscription } from "../../models/user/user-ai-subscription.model.js";
 

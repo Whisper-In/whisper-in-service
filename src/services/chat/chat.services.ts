@@ -35,10 +35,10 @@ export const getChat = async (userId: string, chatId: string) => {
     const aiProfileIDs = chat?.profiles
       .filter((profile) => profile.profileModel == AIProfile.modelName)
       .map((profile) => profile.profile._id.toString());
-    
-    const features:TierChatFeature[] = [];
 
-    if (aiProfileIDs?.length) {      
+    const features: TierChatFeature[] = [];
+
+    if (aiProfileIDs?.length) {
       const queries = await Promise.allSettled([
         UserAISubscription.find({ userId, aiProfileId: { $in: aiProfileIDs } }),
         AIProfile.find({ _id: { $in: aiProfileIDs } })
@@ -49,13 +49,13 @@ export const getChat = async (userId: string, chatId: string) => {
 
         if (userAISubscriptions?.length) {
           const aiProfiles = queries[1].value;
-          
+
           aiProfiles.forEach((profile) => {
             const aiProfileSubscription = userAISubscriptions.find((subscription) => subscription.aiProfileId == profile.id);
             const priceTier = profile.priceTiers.find((priceTier) => priceTier.tier == aiProfileSubscription?.tier);
 
             if (priceTier) {
-              features.push(...priceTier.features);
+              features.push(...priceTier.features.map(f => TierChatFeature[f as keyof typeof TierChatFeature]));
             }
           });
         }

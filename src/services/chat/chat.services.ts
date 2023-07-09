@@ -36,7 +36,7 @@ export const getChat = async (userId: string, chatId: string) => {
       .filter((profile) => profile.profileModel == AIProfile.modelName)
       .map((profile) => profile.profile._id.toString());
 
-    const features: TierChatFeature[] = [];
+    const features: string[] = [];
 
     if (aiProfileIDs?.length) {
       const queries = await Promise.allSettled([
@@ -55,7 +55,7 @@ export const getChat = async (userId: string, chatId: string) => {
             const priceTier = profile.priceTiers.find((priceTier) => priceTier.tier == aiProfileSubscription?.tier);
 
             if (priceTier) {
-              features.push(...priceTier.features.map(f => TierChatFeature[f as keyof typeof TierChatFeature]));
+              features.push(...priceTier.features);
             }
           });
         }

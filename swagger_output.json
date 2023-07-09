@@ -33,6 +33,35 @@
         ]
       }
     },
+    "/chats/{chatId}": {
+      "get": {
+        "tags": [
+          "Chats"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "chatId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/chats/user-chats/{profileId}": {
       "get": {
         "tags": [
@@ -170,25 +199,6 @@
           },
           "404": {
             "description": "Not Found"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/eleven-labs/test": {
-      "post": {
-        "tags": [
-          "Eleven Labs"
-        ],
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
           }
         },
         "security": [

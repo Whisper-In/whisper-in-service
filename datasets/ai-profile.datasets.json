@@ -16,12 +16,14 @@
     "isDefault": false,
     "priceTiers": [
         {
-            "price": 50,
-            "tier": 1
+            "price": 0,
+            "tier": 1,
+            "features": ["AUDIO"]
         }
     ]
 },
 {
+    "_id": "64aa90ddebeed7573e6a995a",
     "name": "Eva",
     "userName": "eva",
     "avatar": "https://storage.googleapis.com/rising-exchange-387212.appspot.com/00309-1047571383-(8k%2C%20best%20quality%2C%20masterpiece%2C%20ultra%20highres_1.2)%20Photo%20of%20Pretty%20Japanese%20woman%20in%20the%20(style%20of%20paul%20rubens%20and%20rebecca%20guay_.png",
@@ -30,8 +32,9 @@
     "isDefault": false,
     "priceTiers": [
         {
-            "price": 100,
-            "tier": 1
+            "price": 0,
+            "tier": 1,
+            "features": ["AUDIO"]
         }
     ]
 }]

@@ -5,6 +5,8 @@ import { passportJWTMiddleware } from "../../middlewares/passportJWTMiddleware.j
 
 const router = express.Router();
 
+router.get("/:chatId", passportJWTMiddleware, chatController.getChat);
+
 router.get("/user-chats/:profileId", passportJWTMiddleware, chatController.getUserChats);
 
 router.post("/user-chats/new-chat", passportJWTMiddleware, chatController.createNewChat);

@@ -23,9 +23,13 @@ export const createUserAISubscription = async (userId: string, aiProfileId: stri
             const aiProfile = await AIProfile.findById(aiProfileId);
 
             if (aiProfile) {
-                const priceTier = aiProfile.priceTiers.find(p => p.tier == tier);
+                const priceTier = aiProfile.priceTiers.find(p => p.tier == tier);                
 
                 if (priceTier) {
+                    if(priceTier.price > 0 && !stripeSubscriptionId) {
+                        throw "No payment found.";
+                    }
+
                     const today = new Date();
 
                     const newSubscription = new UserAISubscription({

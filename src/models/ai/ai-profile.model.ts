@@ -2,9 +2,14 @@ import { Schema, model } from "mongoose";
 
 const namePlaceholder = "{{assistantName}}";
 
+export enum TierChatFeature {
+  AUDIO
+}
+
 interface IPriceTier {
   tier: number;
   price: number;
+  features: string[]
 }
 
 interface IAIProfile {
@@ -23,7 +28,8 @@ interface IAIProfile {
 
 const PriceTierSchema = new Schema<IPriceTier>({
   price: Number,
-  tier: Number
+  tier: Number,
+  features: [String]
 });
 
 const AIProfileSchema = new Schema<IAIProfile>(

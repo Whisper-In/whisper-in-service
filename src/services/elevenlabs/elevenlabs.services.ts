@@ -28,7 +28,7 @@ export const getTextToSpeech = async (text: string, voiceId?: string) => {
                 headers: {
                     Accept: 'audio/mpeg',
                     'Content-Type': 'application/json',
-                    'xi-api-key': elevenLabsAPIKey,
+                    'xi-api-key': elevenLabsAPIKey                                     
                 },
                 params: {
                     optimize_streaming_latency: defaultOptimizeStreamingLatency

@@ -1,9 +1,10 @@
 import { Chat } from "../../models/chat/chat.model.js";
-import { mongo } from "mongoose";
+import { Types, mongo } from "mongoose";
 import { ChatMessage } from "../../models/chat/chat-message.model.js";
-import { AIProfile } from "../../models/ai/ai-profile.model.js";
+import { AIProfile, TierChatFeature } from "../../models/ai/ai-profile.model.js";
 import { UserProfile } from "../../models/user/user-profile.model.js";
 import { isFulfilled } from "../../utils/promise.js";
+import { UserAISubscription } from "../../models/user/user-ai-subscription.model.js";
 
 export const getUserChats = async (userId: string) => {
   try {
@@ -21,6 +22,51 @@ export const getUserChats = async (userId: string) => {
     ]);
 
     return body;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+export const getChat = async (userId: string, chatId: string) => {
+  try {
+    const chat = await Chat.findById(chatId);
+
+    const aiProfileIDs = chat?.profiles
+      .filter((profile) => profile.profileModel == AIProfile.modelName)
+      .map((profile) => profile.profile._id.toString());
+    
+    const features:TierChatFeature[] = [];
+
+    if (aiProfileIDs?.length) {      
+      const queries = await Promise.allSettled([
+        UserAISubscription.find({ userId, aiProfileId: { $in: aiProfileIDs } }),
+        AIProfile.find({ _id: { $in: aiProfileIDs } })
+      ]);
+
+      if (isFulfilled(queries[0]) && isFulfilled(queries[1])) {
+        const userAISubscriptions = queries[0].value;
+
+        if (userAISubscriptions?.length) {
+          const aiProfiles = queries[1].value;
+          
+          aiProfiles.forEach((profile) => {
+            const aiProfileSubscription = userAISubscriptions.find((subscription) => subscription.aiProfileId == profile.id);
+            const priceTier = profile.priceTiers.find((priceTier) => priceTier.tier == aiProfileSubscription?.tier);
+
+            if (priceTier) {
+              features.push(...priceTier.features);
+            }
+          });
+        }
+      }
+
+    }
+
+    return {
+      ...chat,
+      features
+    };
   } catch (error) {
     throw error;
   }

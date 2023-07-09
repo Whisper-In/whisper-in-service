@@ -30,6 +30,21 @@ export const getUserChats: RequestHandler = async (req, res, next) => {
   }
 };
 
+export const getChat: RequestHandler = async (req, res, next) => {
+  try {
+    const user: any = req.user;
+    const userId = user["_id"];
+
+    const { chatId } = req.params;
+
+    const chat = await chatService.getChat(userId, chatId);
+
+    res.status(200).json(chat);
+  } catch (error) {
+    res.status(400).json({ error });
+  }
+}
+
 /*
 export const getChatMessages: RequestHandler = async (req, res, next) => {
   try {
@@ -77,7 +92,7 @@ export const insertNewChatMessage: RequestHandler = async (req, res, next) => {
 export const createNewChat: RequestHandler = async (req, res, next) => {
   const { userId, aiProfileId } = req.body;
 
-  try {    
+  try {
     const newChat = await chatService.createNewChat(userId, aiProfileId);
 
     res.status(201).send({

@@ -3,7 +3,7 @@ import * as userService from "../../services/user/user.services.js";
 
 export const createUserAISubscription: RequestHandler = async (req, res, next) => {
     const aiProfileId = <string>req.body.aiProfileId;
-    const tier = Number.parseInt(<string>req.body.tier);
+    const tier = Number.parseInt(<string>req.body.tier ?? 0);
     const subscriptionId = <string>req.body.subscriptionId;
     const user: any = req.user;
     const userId = user["_id"];

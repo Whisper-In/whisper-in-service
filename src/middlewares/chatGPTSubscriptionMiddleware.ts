@@ -12,7 +12,7 @@ export const chatGPTSubscriptionMiddleware: RequestHandler = async (req, res, ne
         const subscription = await UserAISubscription.exists({ userId, aiProfileId, status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED] });        
 
         if (subscription != null) {
-            next();
+            return next();
         } else {
             return res.status(200).send({
                 message: "Sorry, please subscribe to my profile to chat with me.",

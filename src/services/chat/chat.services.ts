@@ -4,7 +4,8 @@ import { ChatMessage } from "../../models/chat/chat-message.model.js";
 import { AIProfile, TierChatFeature } from "../../models/ai/ai-profile.model.js";
 import { UserProfile } from "../../models/user/user-profile.model.js";
 import { isFulfilled } from "../../utils/promise.js";
-import { UserAISubscription } from "../../models/user/user-ai-subscription.model.js";
+import { SubscriptionStatus, UserAISubscription } from "../../models/user/user-ai-subscription.model.js";
+import { STATUS_CODES } from "http";
 
 export const getUserChats = async (userId: string) => {
   try {
@@ -36,11 +37,11 @@ export const getChat = async (userId: string, chatId: string) => {
       .filter((profile) => profile.profileModel == AIProfile.modelName)
       .map((profile) => profile.profile._id.toString());
 
-    const features: TierChatFeature[] = [];
+    const features: string[] = [];
 
     if (aiProfileIDs?.length) {
       const queries = await Promise.allSettled([
-        UserAISubscription.find({ userId, aiProfileId: { $in: aiProfileIDs } }),
+        UserAISubscription.find({ userId, aiProfileId: { $in: aiProfileIDs }, status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED] }),
         AIProfile.find({ _id: { $in: aiProfileIDs } })
       ]);
 
@@ -53,10 +54,10 @@ export const getChat = async (userId: string, chatId: string) => {
           aiProfiles.forEach((profile) => {
             const aiProfileSubscription = userAISubscriptions.find((subscription) => subscription.aiProfileId == profile.id);
             const priceTier = profile.priceTiers.find((priceTier) => priceTier.tier == aiProfileSubscription?.tier);
-
+            
             if (priceTier) {
               features.push(...priceTier.features);
-            }            
+            }                          
           });
         }
       }

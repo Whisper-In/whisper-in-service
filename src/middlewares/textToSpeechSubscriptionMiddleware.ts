@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import { AIProfile, TierChatFeature } from "../models/ai/ai-profile.model.js";
-import { UserAISubscription } from "../models/user/user-ai-subscription.model.js";
+import { SubscriptionStatus, UserAISubscription } from "../models/user/user-ai-subscription.model.js";
 import { isFulfilled } from "../utils/promise.js";
 
 export const subscriptionFeaturesMiddleware = (features: TierChatFeature[]): RequestHandler => {
@@ -11,7 +11,7 @@ export const subscriptionFeaturesMiddleware = (features: TierChatFeature[]): Req
             const { aiProfileId } = req.params;
 
             const queries = await Promise.allSettled([
-                UserAISubscription.findOne({ userId, aiProfileId }),
+                UserAISubscription.findOne({ userId, aiProfileId, status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED] }),
                 AIProfile.findById(aiProfileId)
             ]);
 
@@ -21,7 +21,7 @@ export const subscriptionFeaturesMiddleware = (features: TierChatFeature[]): Req
 
                 if (userAISubscription && aiProfile) {
                     const priceTier = aiProfile.priceTiers.find((priceTier) => priceTier.tier == userAISubscription.tier);
-                    
+                
                     if (priceTier?.features?.length &&
                         priceTier?.features.every((f) => features.includes(TierChatFeature[f as keyof typeof TierChatFeature]))) {
                         return next();

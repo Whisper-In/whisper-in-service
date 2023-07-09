@@ -9,7 +9,7 @@ export enum TierChatFeature {
 interface IPriceTier {
   tier: number;
   price: number;
-  features: string[]
+  features: number[]
 }
 
 interface IAIProfile {

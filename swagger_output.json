@@ -8,7 +8,7 @@
   "host": "localhost:3000",
   "basePath": "/",
   "schemes": [
-    "http"
+    "http", "https"
   ],
   "securityDefinitions": {
     "bearerAuth": {
@@ -197,6 +197,9 @@
           "400": {
             "description": "Bad Request"
           },
+          "403": {
+            "description": "Forbidden"
+          },
           "404": {
             "description": "Not Found"
           }
@@ -222,6 +225,26 @@
       "get": {
         "tags": [
           "Google"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/auth/apple/login": {
+      "get": {
+        "tags": [
+          "Apple"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/auth/apple/callback": {
+      "post": {
+        "tags": [
+          "Apple"
         ],
         "description": "",
         "parameters": [],
@@ -539,8 +562,12 @@
     },
     "servers": [
       {
-        "url": "http://localhost:3000"
+        "url": "https://localhost:3000"
       }
+    ],
+    "schemes": [
+      "http",
+      "https"
     ]
   },
   "apis": [

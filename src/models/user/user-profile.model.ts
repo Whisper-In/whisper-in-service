@@ -11,8 +11,9 @@ export interface IUserProfile {
   gender: string;
   avatar?: string;
   email: string;
-  googleId: string;
-  stripeId?:string;
+  googleId?: string;
+  appleId?: string;
+  stripeId?: string;
 }
 
 export interface IUserProfileMethods {
@@ -27,9 +28,10 @@ export const UserProfileSchema = new Schema<IUserProfile, UserProfileModel, IUse
     userName: String,
     birthday: Date,
     gender: String,
-    avatar: { type: String, required: false },
+    avatar: String,
     email: String,
     googleId: String,
+    appleId: String,
     stripeId: String
   },
   { timestamps: true }

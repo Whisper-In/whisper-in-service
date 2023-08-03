@@ -5,9 +5,8 @@ import { AIProfile, TierChatFeature } from "../../models/ai/ai-profile.model.js"
 import { UserProfile } from "../../models/user/user-profile.model.js";
 import { isFulfilled } from "../../utils/promise.js";
 import { SubscriptionStatus, UserAISubscription } from "../../models/user/user-ai-subscription.model.js";
-import { STATUS_CODES } from "http";
 
-export const getUserChats = async (userId: string) => {
+export const getUserChats = async (userId: string) => {  
   try {
     const userObjectId = new mongo.ObjectId(userId);
     const body = await Chat.find({

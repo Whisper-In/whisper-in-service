@@ -23,6 +23,8 @@ export const getUserChats: RequestHandler = async (req, res, next) => {
       };
     });
 
+    console.log(results)
+
     return res.status(200).json(results);
   } catch (error) {
     console.log(error);

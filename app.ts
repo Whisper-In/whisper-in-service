@@ -7,12 +7,19 @@ import chatRouter from "./src/routes/chat/chat.routes.js";
 import cors from "cors";
 import swaggerOutput from "./swagger_output.json" assert { type: "json" };
 import googleRouter from "./src/routes/auth/google.routes.js";
+import appleRouter from "./src/routes/auth/apple.routes.js";
 import profileRouter from "./src/routes/profile/profile.routes.js";
 import paymentRouter from "./src/routes/payment/payment.routes.js";
 import userRouter from "./src/routes/user/user.routes.js";
 import elevenLabsRouter from "./src/routes/elevenlabs/elevenlabs.routes.js";
 import { initPassport } from "./src/services/passport/initPassport.js";
 import { paymentWebhook } from "./src/controllers/payment/payment.controller.js";
+import https from "https";
+import fs from "fs";
+import path from "path";
+
+const key = fs.readFileSync(path.join(process.cwd(), "resources", "ssl certs", "key.pem"))
+const cert = fs.readFileSync(path.join(process.cwd(), "resources", "ssl certs", "cert.pem"))
 
 const app = express();
 
@@ -31,6 +38,7 @@ app.post(
 );
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(
   "/chats",
@@ -66,6 +74,12 @@ app.use(
 );
 
 app.use(
+  "/auth/apple",
+  appleRouter
+  //#swagger.tags = ['Apple']
+);
+
+app.use(
   "/profile",
   profileRouter
   /* 
@@ -98,9 +112,18 @@ const start = async () => {
   try {
     await connectMongoDB();
 
-    app.listen(port, () => {
-      console.log(`Whisper In Service listening on port ${port}`);
-    });
+    if (process.env.NODE_ENV == "production") {
+      app.listen(port, () => {
+        console.log(`Whisper In Service listening on port ${port}`);
+      });
+    } else {
+      const server = https.createServer({ key, cert }, app);
+
+      server.listen(port, () => {
+        console.log(`Whisper In Service listening on port ${port} with HTTPS`);
+      });
+    }
+
   } catch (error) {
     console.error(error);
     process.exit(1);

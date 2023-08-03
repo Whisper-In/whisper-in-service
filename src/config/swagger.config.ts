@@ -11,10 +11,11 @@ export const swaggerOptions: Options = {
       },
       servers: [
         {
-          url: `http://localhost:${port}`,
+          url: `https://localhost:${port}`,
         },
       ],
-    },
+      schemes: ["http", "https"]
+    },    
     securityDefinitions: {
       bearerAuth: {
         type: 'apiKey',

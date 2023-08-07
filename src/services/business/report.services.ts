@@ -42,7 +42,7 @@ export const sendReport = async (userId: string, aiProfileId: string, reportReas
                     user: nodeMailerUser,
                     pass: nodeMailerPass
                 },
-                //secure: true,
+                secure: true,
                 tls: {
                     rejectUnauthorized: false
                 }

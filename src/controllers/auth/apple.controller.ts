@@ -16,7 +16,8 @@ export const appleCallback: RequestHandler = async (req, res, next) => {
         _id: reqUser._id,
         name: reqUser.name,
         email: reqUser.email,
-        avatar: reqUser.avatar
+        avatar: reqUser.avatar,
+        isAgreeTnC: reqUser.isAgreeTnC
     };    
 
     res.redirect(

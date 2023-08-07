@@ -6,26 +6,51 @@ import { UserProfile } from "../../models/user/user-profile.model.js";
 import { isFulfilled } from "../../utils/promise.js";
 import { SubscriptionStatus, UserAISubscription } from "../../models/user/user-ai-subscription.model.js";
 
-export const getUserChats = async (userId: string) => {  
+export const getUserChats = async (userId: string) => {
   try {
     const userObjectId = new mongo.ObjectId(userId);
-    const body = await Chat.find({
+    const result = await Chat.find({
       profiles: { $elemMatch: { profile: userObjectId } },
     }).populate([
       {
         path: "profiles",
         populate: {
           path: "profile",
-          match: { _id: { $ne: userObjectId } },
-        },
+          match: { _id: { $ne: userObjectId } },          
+        }
       }
     ]);
 
-    return body;
+    return result;
   } catch (error) {
     throw error;
   }
 };
+
+export const updateChatProfileBlockStatus = async (userId: string, aiProfileId: string, isBlocked: boolean) => {
+  try {
+    const userObjectId = new mongo.ObjectId(userId);
+    const aiProfileObjectId = new mongo.ObjectId(aiProfileId);
+
+    const result = await Chat.findOne({
+      'profiles.profile': {
+        $all: [userObjectId, aiProfileObjectId],
+      }
+    });
+
+    const aiProfile = result?.profiles.find((p) => p.profile.toString() == aiProfileId);    
+
+    if (aiProfile) {
+      aiProfile.blocked = isBlocked;
+      
+      await result?.save();
+    }
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
 
 
 export const getChat = async (userId: string, chatId: string) => {
@@ -53,10 +78,10 @@ export const getChat = async (userId: string, chatId: string) => {
           aiProfiles.forEach((profile) => {
             const aiProfileSubscription = userAISubscriptions.find((subscription) => subscription.aiProfileId == profile.id);
             const priceTier = profile.priceTiers.find((priceTier) => priceTier.tier == aiProfileSubscription?.tier);
-            
+
             if (priceTier) {
               features.push(...priceTier.features);
-            }                          
+            }
           });
         }
       }

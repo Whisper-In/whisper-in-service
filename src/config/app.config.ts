@@ -3,6 +3,12 @@ import dotenv from 'dotenv';
 dotenv.config({ path: process.env.NODE_ENV != 'production' ? `.env.${process.env.NODE_ENV}` : '.env' });
 
 export const port = process.env.PORT;
+export const httpsPort = process.env.HTTPS_PORT;
+export const nodeMailerPort = <string>process.env.NODEMAILER_PORT;
+export const nodeMailerHost = <string>process.env.NODEMAILER_HOST;
+export const nodeMailerUser = <string>process.env.NODEMAILER_SENDER;
+export const nodeMailerPass = <string>process.env.NODEMAILER_PASS;
+export const nodeMailerReceiver = <string>process.env.NODEMAILER_RECEIVER;
 export const mongoDBConnectionString = <string>process.env.MONGODB_CONNECTION_STRING;
 export const openAIApiKey = <string>process.env.OPENAI_API_KEY;
 export const googleClientID = <string>process.env.GOOGLE_CLIENT_ID;

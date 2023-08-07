@@ -1,0 +1,34 @@
+[
+    {
+        "reportReasonCode": "NUDE",
+        "reportReasonDescription": "Nudity or sexual activity"
+    },
+    {
+        "reportReasonCode": "HATE",
+        "reportReasonDescription": "Hate speech or symbols"
+    },
+    {
+        "reportReasonCode": "SCAM",
+        "reportReasonDescription": "Scam or fraud"
+    },
+    {
+        "reportReasonCode": "VIOLENCE",
+        "reportReasonDescription": "Violence or dangerous organizations"
+    },
+    {
+        "reportReasonCode": "ILLEGAL_SALE",
+        "reportReasonDescription": "Sale of illegal or regulated goods"
+    },
+    {
+        "reportReasonCode": "INTELLECTUAL_PROPERTY",
+        "reportReasonDescription": "Intellectual property violation"
+    },
+    {
+        "reportReasonCode": "SUICIDE",
+        "reportReasonDescription": "Suicide or self-injury"
+    },
+    {
+        "reportReasonCode": "SPAM",
+        "reportReasonDescription": "Spam"
+    }
+]

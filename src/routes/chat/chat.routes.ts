@@ -11,6 +11,8 @@ router.get("/user-chats/:profileId", passportJWTMiddleware, chatController.getUs
 
 router.post("/user-chats/new-chat", passportJWTMiddleware, chatController.createNewChat);
 
+router.put("/block-profile", passportJWTMiddleware, chatController.updateChatProfileBlockStatus);
+
 //router.route("/chat-messages/:chatId").get(chatController.getChatMessages);
 //router.route("/chat-messages/insert").post(chatController.insertNewChatMessage);
 

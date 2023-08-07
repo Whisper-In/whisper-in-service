@@ -1,7 +1,7 @@
 import express from "express";
 import swaggerUi from "swagger-ui-express";
 import { connectMongoDB } from "./src/database/mongodb.js";
-import { port } from "./src/config/app.config.js";
+import { httpsPort, port } from "./src/config/app.config.js";
 import chatGPTRouter from "./src/routes/chatgpt/chatgpt.routes.js";
 import chatRouter from "./src/routes/chat/chat.routes.js";
 import cors from "cors";
@@ -12,6 +12,7 @@ import profileRouter from "./src/routes/profile/profile.routes.js";
 import paymentRouter from "./src/routes/payment/payment.routes.js";
 import userRouter from "./src/routes/user/user.routes.js";
 import elevenLabsRouter from "./src/routes/elevenlabs/elevenlabs.routes.js";
+import reportRouter from "./src/routes/profile/report.routes.js";
 import { initPassport } from "./src/services/passport/initPassport.js";
 import { paymentWebhook } from "./src/controllers/payment/payment.controller.js";
 import https from "https";
@@ -89,6 +90,15 @@ app.use(
 );
 
 app.use(
+  "/profile/report",
+  reportRouter
+  /* 
+  #swagger.tags = ['Profile']
+  #swagger.security = [{"bearerAuth": []}] 
+  */
+);
+
+app.use(
   "/payment",
   paymentRouter
   /* 
@@ -112,15 +122,15 @@ const start = async () => {
   try {
     await connectMongoDB();
 
-    if (process.env.NODE_ENV == "production") {
-      app.listen(port, () => {
-        console.log(`Whisper In Service listening on port ${port}`);
-      });
-    } else {
-      const server = https.createServer({ key, cert }, app);
+    app.listen(port, () => {
+      console.log(`Whisper In Service listening on port ${port}`);
+    });
 
-      server.listen(port, () => {
-        console.log(`Whisper In Service listening on port ${port} with HTTPS`);
+    if (process.env.NODE_ENV == 'development') {
+      //Create https server for testing in development
+      const server = https.createServer({ key, cert }, app);
+      server.listen(httpsPort, () => {
+        console.log(`Whisper In Service listening on port ${httpsPort} with HTTPS`);
       });
     }
 

@@ -5,6 +5,7 @@ import { UserProfile } from "../user/user-profile.model.js";
 export interface IChatProfile {
   profile: Types.ObjectId;
   profileModel: any;
+  blocked?: boolean
 }
 
 export interface IChat {
@@ -24,6 +25,7 @@ const ChatProfileSchema = new Schema<IChatProfile>({
     refPath: "profiles.profileModel",
   },
   profileModel,
+  blocked: Boolean
 });
 
 const ChatSchema = new Schema<IChat>(

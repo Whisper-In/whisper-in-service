@@ -3,6 +3,7 @@ export interface IUserChatProfileDto {
   name: string;
   isAI: boolean;
   avatar?: string;
+  isBlocked?:boolean;
 }
 
 export interface IUserChatDto {

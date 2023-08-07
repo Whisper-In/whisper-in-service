@@ -9,7 +9,7 @@ export const getUserChats: RequestHandler = async (req, res, next) => {
 
     const rawResults = await chatService.getUserChats(profileId);
 
-    const results = rawResults.map<chatDTOs.IUserChatDto>((result) => {
+    const results = rawResults.map<chatDTOs.IUserChatDto>((result) => {      
       return {
         chatId: result.id,
         profiles: result.profiles
@@ -19,11 +19,11 @@ export const getUserChats: RequestHandler = async (req, res, next) => {
             name: p.profile.name,
             isAI: p.profileModel == AIProfile.modelName,
             avatar: p.profile.avatar,
-          })),
+            isBlocked: p.blocked
+          })
+          ),
       };
-    });
-
-    console.log(results)
+    });    
 
     return res.status(200).json(results);
   } catch (error) {
@@ -100,6 +100,18 @@ export const createNewChat: RequestHandler = async (req, res, next) => {
     res.status(201).send({
       chatId: newChat.id
     });
+  } catch (error) {
+    res.status(400).json({ error });
+  }
+}
+
+export const updateChatProfileBlockStatus: RequestHandler = async (req, res, next) => {
+  const { userId, aiProfileId, isBlocked } = req.body;
+
+  try {
+    const result = await chatService.updateChatProfileBlockStatus(userId, aiProfileId, isBlocked);
+
+    res.status(204).send(result);
   } catch (error) {
     res.status(400).json({ error });
   }

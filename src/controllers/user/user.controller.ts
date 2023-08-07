@@ -23,8 +23,18 @@ export const getUserProfile: RequestHandler = async (req, res, next) => {
 
     try {
         const result = await userService.getUserProfile(userId);
-        
+
         res.status(200).json(result);
+    } catch (error) {
+        res.status(400).send({ error });
+    }
+}
+
+export const updateUserProfile: RequestHandler = async (req, res, next) => {
+    try {
+        const result = await userService.updateUserProfile(req.body);
+
+        res.status(204).json(result);
     } catch (error) {
         res.status(400).send({ error });
     }

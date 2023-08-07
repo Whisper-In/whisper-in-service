@@ -14,6 +14,7 @@ export interface IUserProfile {
   googleId?: string;
   appleId?: string;
   stripeId?: string;
+  isAgreeTnC: boolean;
 }
 
 export interface IUserProfileMethods {
@@ -32,7 +33,8 @@ export const UserProfileSchema = new Schema<IUserProfile, UserProfileModel, IUse
     email: String,
     googleId: String,
     appleId: String,
-    stripeId: String
+    stripeId: String,
+    isAgreeTnC: Boolean
   },
   { timestamps: true }
 );

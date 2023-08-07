@@ -1,6 +1,6 @@
 import { AIProfile } from "../../models/ai/ai-profile.model.js";
 import { SubscriptionStatus, UserAISubscription } from "../../models/user/user-ai-subscription.model.js";
-import { UserProfile } from "../../models/user/user-profile.model.js";
+import { IUserProfile, UserProfile } from "../../models/user/user-profile.model.js";
 
 export const createUserAISubscription = async (userId: string, aiProfileId: string, tier: number, stripeSubscriptionId: string) => {
     try {
@@ -23,10 +23,10 @@ export const createUserAISubscription = async (userId: string, aiProfileId: stri
             const aiProfile = await AIProfile.findById(aiProfileId);
 
             if (aiProfile) {
-                const priceTier = aiProfile.priceTiers.find(p => p.tier == tier);                
+                const priceTier = aiProfile.priceTiers.find(p => p.tier == tier);
 
                 if (priceTier) {
-                    if(priceTier.price > 0 && !stripeSubscriptionId) {
+                    if (priceTier.price > 0 && !stripeSubscriptionId) {
                         throw "No payment found.";
                     }
 
@@ -65,6 +65,16 @@ export const updateUserAISubscription = async (userId: string, aiProfileId: stri
 export const getUserProfile = async (userId: string) => {
     try {
         const result = await UserProfile.findById(userId);
+
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const updateUserProfile = async (userProfile: IUserProfile) => {
+    try {
+        const result = await UserProfile.findByIdAndUpdate({ _id: userProfile._id }, userProfile);
 
         return result;
     } catch (error) {

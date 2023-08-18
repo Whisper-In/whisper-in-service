@@ -43,4 +43,8 @@ router.get("/recommended", passportJWTMiddleware, postController.getRecommendedP
 
 router.post("/like", passportJWTMiddleware, postController.likePost);
 
+router.get("/view-post/:postId", postController.viewPost);
+
+router.get("/details/:postId", passportJWTMiddleware, postController.getPostDetail);
+
 export default router;

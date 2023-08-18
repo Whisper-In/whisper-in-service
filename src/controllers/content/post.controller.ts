@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import * as postService from "../../services/content/post.service.js";
 import { Types } from "mongoose";
+import { appScheme } from "../../config/app.config.js";
 
 export const getPosts: RequestHandler = async (req, res, next) => {
     try {
@@ -83,5 +84,29 @@ export const likePost: RequestHandler = async (req, res, next) => {
         return res.status(200).send(results);
     } catch (error) {
         return res.status(400).send({ error });
+    }
+}
+
+export const viewPost: RequestHandler = async (req, res, next) => {
+    try {
+        const { postId } = req.params;
+
+        return res.redirect(`${appScheme}://viewpost?postId=${postId}`);
+    } catch (error) {
+        return res.status(400).send({ error });
+    }
+}
+
+export const getPostDetail: RequestHandler = async (req, res, next) => {
+    try {
+        const user: any = req.user;
+        const userId = user["_id"];
+        const { postId } = req.params;
+
+        const result = await postService.getPostDetail(userId, postId);
+
+        return res.status(200).send(result);
+    } catch (error) {
+        throw error;
     }
 }

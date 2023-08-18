@@ -17,7 +17,7 @@ export const getRecommendedPosts = async (userId: string, size: number, filterPo
 
         let matchContdition: any = {
             _id: { $nin: filterPostObjectIds }
-        }        
+        }
 
         if (showFollowingOnly) {
             matchContdition.creator = { $in: following }
@@ -200,4 +200,54 @@ export const likePost = async (userId: string, postId: string) => {
     } catch (error) {
         throw error;
     }
+}
+
+export const getPostDetail = async (userId: string, postId: string) => {
+    try {
+
+        const result = await Post.aggregate([
+            {
+                $match: { _id: new Types.ObjectId(postId) }
+            },
+            {
+                $lookup: {
+                    from: `${UserLikedPost.modelName}s`.toLowerCase(),
+                    foreignField: "postId",
+                    localField: "_id",
+                    as: "likes"
+                }
+            },
+            {
+                $project: {
+                    postURL: 1,
+                    postType: 1,
+                    description: 1,
+                    creator: 1,
+                    creatorModel: 1,
+                    thumbnailURL: 1,
+                    likeCount: { $size: "$likes" },
+                    isLiked: { $in: [userId, "$likes.userId"] },
+                }
+            }
+        ]).then(items => items[0]);
+
+        const isFollowing = await UserAISubscription.exists({
+            userId, aiProfileId: result.creator
+        }).then(item => item?._id != null);
+
+        await Post.populate(result, {
+            path: "creator",
+            select: {
+                _id: true,
+                userName: true,
+                avatar: true,
+                isFollowing: { $eq:[true, isFollowing] }
+            },
+        });
+
+        return result;
+    } catch (error) {
+        throw error;
+    }
+
 }

@@ -4,7 +4,7 @@ import { UserLikedPost } from "../../models/content/user-liked-post.model.js";
 import { SubscriptionStatus, UserAISubscription } from "../../models/user/user-ai-subscription.model.js";
 import { UserProfile } from "../../models/user/user-profile.model.js";
 
-export const getRecommendedPosts = async (userId: string, size: number, showFollowingOnly?: boolean) => {
+export const getRecommendedPosts = async (userId: string, size: number, filterPostIds: string[], showFollowingOnly?: boolean) => {
     try {
         const following = await UserAISubscription.find({
             userId,
@@ -13,11 +13,19 @@ export const getRecommendedPosts = async (userId: string, size: number, showFoll
             aiProfileId: true
         }).transform((results) => results.map(r => r.aiProfileId));
 
+        const filterPostObjectIds = filterPostIds?.map(id => new Types.ObjectId(id)) ?? [];
+
+        let matchContdition: any = {
+            _id: { $nin: filterPostObjectIds }
+        }        
+
+        if (showFollowingOnly) {
+            matchContdition.creator = { $in: following }
+        }
+
         const results = await Post.aggregate([
             {
-                $match: showFollowingOnly ? {
-                    creator: { $in: following }
-                } : {}
+                $match: matchContdition
             },
             {
                 $lookup: {
@@ -78,12 +86,20 @@ export const getExplorePosts = async (size: number) => {
     }
 }
 
-export const getPosts = async (userId: string, profileId: string, postType: string, pageIndex: number, itemsPerLoad: number) => {
+export const getPosts = async (
+    userId: string, profileId: string, postType: string,
+    pageIndex: number, itemsPerLoad: number
+) => {
     try {
         const isFollowing = await UserAISubscription.exists({
             userId,
             aiProfileId: profileId,
             status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED]
+        });
+
+        const totalPosts = await Post.count({
+            creator: profileId,
+            postType
         });
 
         const results = await Post.aggregate([
@@ -92,6 +108,9 @@ export const getPosts = async (userId: string, profileId: string, postType: stri
                     creator: new Types.ObjectId(profileId),
                     postType
                 }
+            },
+            {
+                $skip: pageIndex * itemsPerLoad
             },
             {
                 $lookup: {
@@ -110,11 +129,8 @@ export const getPosts = async (userId: string, profileId: string, postType: stri
                     creatorModel: 1,
                     thumbnailURL: 1,
                     likeCount: { $size: "$likes" },
-                    isLiked: { $in: [userId, "$likes.userId"] }
+                    isLiked: { $in: [userId, "$likes.userId"] },
                 }
-            },
-            {
-                $skip: pageIndex * itemsPerLoad
             },
             {
                 $limit: itemsPerLoad
@@ -131,7 +147,10 @@ export const getPosts = async (userId: string, profileId: string, postType: stri
             },
         });
 
-        return results;
+        return {
+            posts: results,
+            totalPosts
+        };
     } catch (error) {
         console.log(error)
         throw error;

@@ -14,7 +14,10 @@ export const getPosts: RequestHandler = async (req, res, next) => {
             throw "Profile ID is required";
         }
 
-        const results = await postService.getPosts(userId, profileId as string, postType as string, pageIndex, itemsPerLoad);
+        const results = await postService.getPosts(
+            userId, profileId as string,
+            postType as string, pageIndex, itemsPerLoad
+        );
 
         return res.status(200).send(results);
     } catch (error) {
@@ -22,7 +25,7 @@ export const getPosts: RequestHandler = async (req, res, next) => {
     }
 }
 
-export const createAIPost: RequestHandler = async (req, res, next) => {
+export const createPost: RequestHandler = async (req, res, next) => {
     try {
         const user: any = req.user;
         const userId = user["_id"];
@@ -57,10 +60,11 @@ export const getRecommendedPosts: RequestHandler = async (req, res, next) => {
     try {
         const user: any = req.user;
         const userId = user["_id"];
+        const filterPostIds = req.query.filterPostIds;
         const showFollowingOnly: boolean = req.query.showFollowingOnly == "true";
         let size = req.query.size ? parseInt(req.query.size as string) : 5;
 
-        const results = await postService.getRecommendedPosts(userId, size, showFollowingOnly);
+        const results = await postService.getRecommendedPosts(userId, size, filterPostIds as string[], showFollowingOnly);
 
         return res.status(200).send(results);
     } catch (error) {

@@ -23,7 +23,7 @@ const router = express();
 
 router.get("/", passportJWTMiddleware, postController.getPosts);
 
-router.post("/createPost", [passportJWTMiddleware, uploadHandler.single('post')], postController.createAIPost);
+router.post("/createPost", [passportJWTMiddleware, uploadHandler.single('post')], postController.createPost);
 
 router.get("/explore", passportJWTMiddleware, postController.getExplorePosts);
 

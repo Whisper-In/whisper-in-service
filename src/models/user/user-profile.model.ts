@@ -15,6 +15,7 @@ export interface IUserProfile {
   appleId?: string;
   stripeId?: string;
   isAgreeTnC: boolean;
+  linkedAIProfile?: ObjectId;
 }
 
 export interface IUserProfileMethods {
@@ -34,7 +35,11 @@ export const UserProfileSchema = new Schema<IUserProfile, UserProfileModel, IUse
     googleId: String,
     appleId: String,
     stripeId: String,
-    isAgreeTnC: Boolean
+    isAgreeTnC: Boolean,
+    linkedAIProfile: {
+      type: Schema.Types.ObjectId,
+      ref: "AIProfile"
+    }
   },
   { timestamps: true }
 );

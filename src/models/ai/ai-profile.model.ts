@@ -53,6 +53,12 @@ AIProfileSchema.virtual("characterPrompt").get(function () {
   return this.baseCharacterPrompt.replace(namePlaceholder, this.name);
 });
 
+AIProfileSchema.virtual('posts', {
+  ref: 'Post',
+  localField: '_id',
+  foreignField: 'creator'
+});
+
 const AIProfile = model("AIProfile", AIProfileSchema);
 
 export { AIProfile };

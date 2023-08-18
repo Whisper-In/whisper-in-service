@@ -13,6 +13,7 @@ import paymentRouter from "./src/routes/payment/payment.routes.js";
 import userRouter from "./src/routes/user/user.routes.js";
 import elevenLabsRouter from "./src/routes/elevenlabs/elevenlabs.routes.js";
 import reportRouter from "./src/routes/profile/report.routes.js";
+import postRouter from "./src/routes/content/post.routes.js";
 import { initPassport } from "./src/services/passport/initPassport.js";
 import { paymentWebhook } from "./src/controllers/payment/payment.controller.js";
 import https from "https";
@@ -115,6 +116,15 @@ app.use(
   #swagger.security = [{"bearerAuth": []}] 
   */
 );
+
+app.use(
+  "/content/posts",
+  postRouter
+  /* 
+  #swagger.tags = ['Content']
+  #swagger.security = [{"bearerAuth": []}] 
+  */
+)
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOutput));
 

@@ -39,3 +39,15 @@ export const updateUserProfile: RequestHandler = async (req, res, next) => {
         res.status(400).send({ error });
     }
 }
+
+export const updateUserTnC: RequestHandler = async (req, res, next) => {
+    try {
+        const { userId, isAgreeTnC } = req.body;
+
+        const result = await userService.updateUserTnC(userId, isAgreeTnC);
+
+        res.status(204).json(result);
+    } catch (error) {
+        res.status(400).send({ error });
+    }
+}

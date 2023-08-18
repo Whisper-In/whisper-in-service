@@ -81,3 +81,13 @@ export const updateUserProfile = async (userProfile: IUserProfile) => {
         throw error;
     }
 }
+
+export const updateUserTnC = async (userId: string, isAgreeTnC: boolean) => {
+    try {
+        const result = await UserProfile.findByIdAndUpdate({ _id: userId }, { isAgreeTnC });
+
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}

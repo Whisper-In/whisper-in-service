@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import passport from "passport";
-import { googleCallback } from "../../controllers/auth/google.controller.js";
+import { googleCallback, googleWebCallback } from "../../controllers/auth/google.controller.js";
+import { googleWebCallbackURL } from "../../config/app.config.js";
 
 const router = express.Router();
 
@@ -15,5 +16,18 @@ router.get(
   passport.authenticate("google", { session: false }),
   googleCallback
 );
+
+router.get(
+  "/web/login",
+  passport.authenticate("google-web", { scope: ["profile", "email"] })
+  //#swagger.tags = ['Google']
+);
+
+router.get(
+  "/web/callback",
+  passport.authenticate("google-web", { session: false }),
+  googleWebCallback
+);
+
 
 export default router;

@@ -7,23 +7,7 @@ export const getUserChats: RequestHandler = async (req, res, next) => {
   try {
     const { profileId } = req.params;
 
-    const rawResults = await chatService.getUserChats(profileId);
-
-    const results = rawResults.map<chatDTOs.IUserChatDto>((result) => {      
-      return {
-        chatId: result.id,
-        profiles: result.profiles
-          .filter((p) => p.profile != null)
-          .map<chatDTOs.IUserChatProfileDto>((p: any) => ({
-            _id: p.profile.id,
-            name: p.profile.name,
-            isAI: p.profileModel == AIProfile.modelName,
-            avatar: p.profile.avatar,
-            isBlocked: p.blocked
-          })
-          ),
-      };
-    });    
+    const results = await chatService.getUserChats(profileId);
 
     return res.status(200).json(results);
   } catch (error) {

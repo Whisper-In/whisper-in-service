@@ -23,7 +23,7 @@ export const createPaymentSheet = async (
             const customer = await stripe.customers.create();
             customerStripeId = customer.id;
         }
-
+        
         const ephemeralKey = await stripe.ephemeralKeys.create(
             { customer: customerStripeId },
             { apiVersion: "2022-11-15" }

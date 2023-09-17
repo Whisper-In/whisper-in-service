@@ -5,8 +5,10 @@ import { UserProfile } from "../user/user-profile.model.js";
 interface IChatMessage {
   chat: Types.ObjectId;
   message: string;
+  isAudio?: boolean;
+  audioId?: number;
   sender: Types.ObjectId;
-  senderModel: string;  
+  senderModel: string;
   createdAt?: Date,
   updatedAt?: Date
 }
@@ -15,7 +17,7 @@ const ChatMessageSchema = new Schema<IChatMessage>(
   {
     chat: { type: Schema.Types.ObjectId, ref: "Chat" },
     message: String,
-    sender: { type: Schema.Types.ObjectId, refPath: "senderModel" },    
+    sender: { type: Schema.Types.ObjectId, refPath: "senderModel" },
     senderModel: { type: String, enum: [UserProfile.modelName, AIProfile.modelName], },
   },
   { timestamps: true }

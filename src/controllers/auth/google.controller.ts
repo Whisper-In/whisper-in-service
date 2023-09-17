@@ -5,7 +5,7 @@ import {
   IUserProfile,
   IUserProfileMethods,
 } from "../../models/user/user-profile.model.js";
-import { appScheme } from "../../config/app.config.js";
+import { appCallbackURL, appScheme } from "../../config/app.config.js";
 
 export const googleCallback: RequestHandler = async (req, res, next) => {
   const reqUser = <IUserProfile & IUserProfileMethods>req.user!;
@@ -18,9 +18,27 @@ export const googleCallback: RequestHandler = async (req, res, next) => {
     email: reqUser.email,
     avatar: reqUser.avatar,
     isAgreeTnC: reqUser.isAgreeTnC
-  };  
+  };
 
   res.redirect(
     `${appScheme}://login?user=${JSON.stringify(user)}&token=${jwtToken}`
+  );
+};
+
+export const googleWebCallback: RequestHandler = async (req, res, next) => {
+  const reqUser = <IUserProfile & IUserProfileMethods>req.user!;
+
+  //Generate jwt token
+  const jwtToken = reqUser.generateJWT();
+  const user = {
+    _id: reqUser._id,
+    name: reqUser.name,
+    email: reqUser.email,
+    avatar: reqUser.avatar,
+    isAgreeTnC: reqUser.isAgreeTnC
+  };
+
+  res.redirect(
+    `${appCallbackURL}?user=${JSON.stringify(user)}&token=${jwtToken}`
   );
 };

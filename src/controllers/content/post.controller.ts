@@ -57,7 +57,7 @@ export const getExplorePosts: RequestHandler = async (req, res, next) => {
     }
 }
 
-export const getRecommendedPosts: RequestHandler = async (req, res, next) => {
+export const getRecommendedPosts: RequestHandler = async (req, res, next) => {    
     try {
         const user: any = req.user;
         const userId = user["_id"];

@@ -5,14 +5,14 @@ import { SubscriptionStatus, UserAISubscription } from "../../models/user/user-a
 import { UserProfile } from "../../models/user/user-profile.model.js";
 
 export const getRecommendedPosts = async (userId: string, size: number, filterPostIds: string[], showFollowingOnly?: boolean) => {
-    try {
+    try {        
         const following = await UserAISubscription.find({
             userId,
             status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED]
         }).select({
             aiProfileId: true
         }).transform((results) => results.map(r => r.aiProfileId));
-
+        
         const filterPostObjectIds = filterPostIds?.map(id => new Types.ObjectId(id)) ?? [];
 
         let matchContdition: any = {

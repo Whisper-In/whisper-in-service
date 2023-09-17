@@ -146,6 +146,20 @@ const insertSamplePosts = async () => {
        });
      }
 
+     for(let i = 1; i <= 5; i++) {
+      const _hasDescription = hasDecription();
+       const _descriptionIndex = descriptionIndex(_hasDescription);
+       samplePosts.push({
+         postURL: `https://storage.googleapis.com/whisperin-posts/Eva/Eva%20(${i}).mp4`,
+         thumbnailURL: `https://storage.googleapis.com/whisperin-posts/Eva/Eva%20(${i})-Thumbnail.png`,
+         postType: PostType[PostType.VIDEO],
+         creator: evaProfile?.id,
+         creatorModel: AIProfile.modelName,
+         description: _hasDescription ? sampleDescriptions[_descriptionIndex] : undefined
+       });
+     }
+
+
 
     await Post.insertMany(samplePosts);
 

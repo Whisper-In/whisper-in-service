@@ -1,18 +1,16 @@
-import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
+import OpenAI from "openai";
 import { openAIApiKey } from "../../config/app.config.js";
 import { AIProfile } from "../../models/ai/ai-profile.model.js";
 import { CHAT_COMPLETION_TEMP } from "../../config/chatgpt.config.js";
 
-const configuration = new Configuration({
-  apiKey: openAIApiKey,
+const openai = new OpenAI({
+  apiKey: openAIApiKey
 });
-
-const openai = new OpenAIApi(configuration);
 
 export const getChatCompletion = async (
   aiProfileId: string,
   message: string,
-  prevMessages: ChatCompletionRequestMessage[] = []
+  prevMessages: OpenAI.Chat.ChatCompletionMessageParam[] = []
 ) => {
   try {
     const aiProfile = await AIProfile.findOne({ _id: aiProfileId });
@@ -21,14 +19,14 @@ export const getChatCompletion = async (
       throw "AI profile id provided does not exists.";
     }
 
-    const completion = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo-0301",
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4",
       messages: [
         {
-          role: "user",
+          role: "system",
           content: aiProfile.characterPrompt,
         },
-        ...prevMessages,        
+        ...prevMessages,
         {
           role: "user",
           content: `${message}. (Stay in character).`,
@@ -37,7 +35,7 @@ export const getChatCompletion = async (
       temperature: CHAT_COMPLETION_TEMP,
     });
 
-    return completion.data.choices[0].message;
+    return completion.choices[0].message;
   } catch (error: any) {
     throw error.message;
   }

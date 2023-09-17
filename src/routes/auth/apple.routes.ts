@@ -22,7 +22,7 @@ router.get(
   //#swagger.tags = ['Google']
 );
 
-router.get(
+router.post(
   "/web/callback",
   passport.authenticate("apple-web", { session: false }),
   appleWebCallback

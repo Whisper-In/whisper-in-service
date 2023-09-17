@@ -30,5 +30,6 @@ export const appleSignInKeyID = <string>process.env.APPLE_SIGN_IN_KEY_ID;
 export const appleSignInKeyFileName = <string>process.env.APPLE_SIGN_IN_KEY_FILENAME;
 export const appleSignInServiceID = <string>process.env.APPLE_SIGN_IN_SERVICE_ID;
 export const appleSignInCallbackURL= <string>process.env.APPLE_SIGN_IN_CALLBACK_URL;
+export const appleSignInWebCallbackURL= <string>process.env.APPLE_SIGN_IN_WEB_CALLBACK_URL;
 export const googleStoragePostsBucketName = <string>process.env.GOOGLE_STORAGE_POSTS_BUCKET_NAME;
 export const googleCloudKeyFileName= <string>process.env.GOOGLE_CLOUD_KEYFILE_NAME;

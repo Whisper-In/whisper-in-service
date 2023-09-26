@@ -19,13 +19,8 @@ export const getChatCompletion = async (
       throw "AI profile id provided does not exists.";
     }
 
-<<<<<<< Updated upstream
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4-0613",
-=======
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo-instruct",
->>>>>>> Stashed changes
       messages: [
         {
           role: "system",

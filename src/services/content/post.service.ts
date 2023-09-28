@@ -189,7 +189,6 @@ export const createPost = async (userId: string, description: string, file: Expr
                     .on("error", (err) => {
                         console.log("ffmpeg:", err);
                         rmSnapshot();
-                        reject(err);
                     })
                     .on("end", () => {
                         fs.readFile(`${snapshotPath}/${snapshotFileName}`, (err, data) => {
@@ -199,7 +198,7 @@ export const createPost = async (userId: string, description: string, file: Expr
                     });
             });
 
-            const thumbnailFile = await googleCloudSerice.uploadFile(googleStoragePostsBucketName, `${userId}/${file.filename}_thumbnail`, snapshotBuffer);
+            const thumbnailFile = await googleCloudSerice.uploadFile(googleStoragePostsBucketName, `${file.filename}_thumbnail`, snapshotBuffer);
             thumbnailURL = thumbnailFile.publicUrl();
         }
 

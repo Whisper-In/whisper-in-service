@@ -1,6 +1,6 @@
 import { connect } from "mongoose";
 import aiProfileJSON from "../../datasets/ai-profile.datasets.json" assert { type: "json" };
-import { AIProfile } from "../../src/models/ai/ai-profile.model.js";
+import { UserProfile } from "../../src/models/user/user-profile.model.js";
 import { exit } from "process";
 import dotenv from 'dotenv';
 
@@ -10,10 +10,9 @@ const insertAIProfiles = async () => {
   try {
     await connect(process.env.MONGODB_CONNECTION_STRING as string);
 
-    await AIProfile.deleteMany({});
-    await AIProfile.insertMany(aiProfileJSON);
+    await UserProfile.insertMany(aiProfileJSON);
     
-    console.log(`Insert AI profiles successful!`);    
+    console.log(`Insert AI User profiles successful!`);    
   } catch (error) {
     console.log(error);
   } finally {

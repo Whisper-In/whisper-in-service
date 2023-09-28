@@ -8,7 +8,7 @@ export interface IBusinessConfig {
 
 export const BusinessConfigSchema = new Schema<IBusinessConfig>(
     {
-        configName: { type: String, unique: true },
+        configName: { type: String, required: true, unique: true },
         configValue: String
     },
     { timestamps: true }

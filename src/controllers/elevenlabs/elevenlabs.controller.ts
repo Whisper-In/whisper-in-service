@@ -1,23 +1,22 @@
 import { RequestHandler } from "express";
 import * as elevenLabsService from "../../services/elevenlabs/elevenlabs.services.js";
-import { AIProfile } from "../../models/ai/ai-profile.model.js";
-
+import { UserProfile } from "../../models/user/user-profile.model.js";
 export const getTextToSpeech: RequestHandler = async (req, res, next) => {
     try {
-        const aiProfileId = req.params.aiProfileId;
+        const profileId = req.params.profileId;
         const text: string = req.body.text;
 
         if (!text?.length) {
             throw "Text input required.";
         }
 
-        const aiProfile = await AIProfile.findById(aiProfileId);
+        const profile = await UserProfile.findById(profileId);
 
-        if (!aiProfile) {
-            return res.status(404).json({ error: "AI Profile not found." });
+        if (!profile) {
+            return res.status(404).json({ error: "Profile not found." });
         }
 
-        const voiceId = aiProfile.voiceId;
+        const voiceId = profile.voiceId;
 
         const result = await elevenLabsService.getTextToSpeech(text, voiceId);
 

@@ -1,18 +1,21 @@
 import { Types, mongo } from "mongoose";
 import { Post, PostType } from "../../models/content/post.model.js"
 import { UserLikedPost } from "../../models/content/user-liked-post.model.js";
-import { SubscriptionStatus, UserAISubscription } from "../../models/user/user-ai-subscription.model.js";
-import { UserProfile } from "../../models/user/user-profile.model.js";
+import { SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model.js";
+import * as googleCloudSerice from "../../services/google-cloud/google-cloud.service.js";
+import { googleStoragePostsBucketName } from "../../config/app.config.js";
+import ffmpeg from "fluent-ffmpeg";
+import fs from "fs";
 
 export const getRecommendedPosts = async (userId: string, size: number, filterPostIds: string[], showFollowingOnly?: boolean) => {
-    try {        
-        const following = await UserAISubscription.find({
+    try {
+        const following = await UserSubscription.find({
             userId,
             status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED]
         }).select({
-            aiProfileId: true
-        }).transform((results) => results.map(r => r.aiProfileId));
-        
+            subscribedUserId: true
+        }).transform((results) => results.map(r => r.subscribedUserId));
+
         const filterPostObjectIds = filterPostIds?.map(id => new Types.ObjectId(id)) ?? [];
 
         let matchContdition: any = {
@@ -91,7 +94,7 @@ export const getPosts = async (
     pageIndex: number, itemsPerLoad: number
 ) => {
     try {
-        const isFollowing = await UserAISubscription.exists({
+        const isFollowing = await UserSubscription.exists({
             userId,
             aiProfileId: profileId,
             status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED]
@@ -159,16 +162,52 @@ export const getPosts = async (
 
 export const createPost = async (userId: string, description: string, file: Express.Multer.File) => {
     try {
-        const userProfile = await UserProfile.findById(userId);
+        const postType = PostType[file.mimetype.includes("video") ? PostType.VIDEO : PostType.PHOTO];
 
-        if (!userProfile?.linkedAIProfile) {
-            throw "User is not linked to an AI profile."
+        let thumbnailURL: string | undefined;
+
+        if (postType == PostType[PostType.VIDEO]) {
+            const snapshotPath = `${userId}/${Date.now()}_thumbnail`;
+            const snapshotFileName = "snapshot.jpg";
+
+            if (!fs.existsSync(snapshotPath)) {
+                fs.mkdirSync(snapshotPath, {
+                    recursive: true
+                });
+            }
+
+            const rmSnapshot = () => {
+                fs.rmSync(snapshotPath, { recursive: true, force: true });
+            }
+
+            const snapshotBuffer = await new Promise<Buffer>((resolve, reject) => {
+                ffmpeg(file.path).takeScreenshots({
+                    count: 1,
+                    filename: snapshotFileName,
+                    folder: snapshotPath
+                }, snapshotPath)
+                    .on("error", (err) => {
+                        console.log("ffmpeg:", err);
+                        rmSnapshot();
+                        reject(err);
+                    })
+                    .on("end", () => {
+                        fs.readFile(`${snapshotPath}/${snapshotFileName}`, (err, data) => {
+                            rmSnapshot();
+                            resolve(data);
+                        });
+                    });
+            });
+
+            const thumbnailFile = await googleCloudSerice.uploadFile(googleStoragePostsBucketName, `${userId}/${file.filename}_thumbnail`, snapshotBuffer);
+            thumbnailURL = thumbnailFile.publicUrl();
         }
 
         const newPost = new Post({
-            creator: userProfile.linkedAIProfile,
+            creator: userId,
             description,
-            postType: PostType[file.mimetype.includes("video") ? PostType.VIDEO : PostType.PHOTO],
+            postType,
+            thumbnailURL,
             postURL: file.path
         });
 
@@ -231,7 +270,7 @@ export const getPostDetail = async (userId: string, postId: string) => {
             }
         ]).then(items => items[0]);
 
-        const isFollowing = await UserAISubscription.exists({
+        const isFollowing = await UserSubscription.exists({
             userId, aiProfileId: result.creator
         }).then(item => item?._id != null);
 
@@ -241,7 +280,7 @@ export const getPostDetail = async (userId: string, postId: string) => {
                 _id: true,
                 userName: true,
                 avatar: true,
-                isFollowing: { $eq:[true, isFollowing] }
+                isFollowing: { $eq: [true, isFollowing] }
             },
         });
 

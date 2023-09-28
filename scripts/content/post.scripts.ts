@@ -3,7 +3,7 @@ import postsJSON from "../../datasets/post.datasets.json" assert { type: "json" 
 import { Post, PostType } from "../../src/models/content/post.model.js";
 import { exit } from "process";
 import dotenv from 'dotenv';
-import { AIProfile } from "../../src/models/ai/ai-profile.model.js";
+import { UserProfile } from "../../src/models/user/user-profile.model";
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
 
@@ -78,7 +78,7 @@ const insertSamplePosts = async () => {
     }
 
     //Aiko
-    const aikoProfile = await AIProfile.findOne({userName: "aiko"});
+    const aikoProfile = await UserProfile.findOne({userName: "aiko"});
     for(let i = 1; i <= 19; i++) {
       const _hasDescription = hasDecription();
       const _descriptionIndex = descriptionIndex(_hasDescription);
@@ -87,7 +87,7 @@ const insertSamplePosts = async () => {
         postURL: `https://storage.googleapis.com/whisperin-posts/Aiko/Aiko%20(${i}).png`,
         postType: PostType[PostType.PHOTO],
         creator: aikoProfile?.id,
-        creatorModel: AIProfile.modelName,
+        creatorModel: UserProfile.modelName,
         description: _hasDescription ? sampleDescriptions[_descriptionIndex] : undefined
       });
     }
@@ -100,13 +100,13 @@ const insertSamplePosts = async () => {
         thumbnailURL: `https://storage.googleapis.com/whisperin-posts/Aiko/Aiko%20(${i})-Thumbnail.png`,
         postType: PostType[PostType.VIDEO],
         creator: aikoProfile?.id,
-        creatorModel: AIProfile.modelName,
+        creatorModel: UserProfile.modelName,
         description: _hasDescription ? sampleDescriptions[_descriptionIndex] : undefined
       });
     }
 
     //Aiu
-    const aiuProfile = await AIProfile.findOne({userName: "aiu"});
+    const aiuProfile = await UserProfile.findOne({userName: "aiu"});
     for(let i = 1; i <= 18; i++) {
       const _hasDescription = hasDecription();
       const _descriptionIndex = descriptionIndex(_hasDescription);
@@ -114,7 +114,7 @@ const insertSamplePosts = async () => {
         postURL: `https://storage.googleapis.com/whisperin-posts/Aiu/Aiu%20(${i}).png`,
         postType: PostType[PostType.PHOTO],
         creator: aiuProfile?.id,
-        creatorModel: AIProfile.modelName,
+        creatorModel: UserProfile.modelName,
         description: _hasDescription ? sampleDescriptions[_descriptionIndex] : undefined
       });
     }
@@ -127,26 +127,26 @@ const insertSamplePosts = async () => {
         thumbnailURL: `https://storage.googleapis.com/whisperin-posts/Aiu/Aiu%20(${i})-Thumbnail.png`,
         postType: PostType[PostType.VIDEO],
         creator: aiuProfile?.id,
-        creatorModel: AIProfile.modelName,
+        creatorModel: UserProfile.modelName,
         description: _hasDescription ? sampleDescriptions[_descriptionIndex] : undefined
       });
     }
 
-     //Eva
-     const evaProfile = await AIProfile.findOne({userName: "eva"});
-     for(let i = 1; i <= 19; i++) {
+    //Eva
+    const evaProfile = await UserProfile.findOne({userName: "eva"});
+    for(let i = 1; i <= 19; i++) {
       const _hasDescription = hasDecription();
        const _descriptionIndex = descriptionIndex(_hasDescription);
        samplePosts.push({
          postURL: `https://storage.googleapis.com/whisperin-posts/Eva/Eva%20(${i}).png`,
          postType: PostType[PostType.PHOTO],
          creator: evaProfile?.id,
-         creatorModel: AIProfile.modelName,
+         creatorModel: UserProfile.modelName,
          description: _hasDescription ? sampleDescriptions[_descriptionIndex] : undefined
        });
-     }
+    }
 
-     for(let i = 1; i <= 5; i++) {
+    for(let i = 1; i <= 5; i++) {
       const _hasDescription = hasDecription();
        const _descriptionIndex = descriptionIndex(_hasDescription);
        samplePosts.push({
@@ -154,12 +154,10 @@ const insertSamplePosts = async () => {
          thumbnailURL: `https://storage.googleapis.com/whisperin-posts/Eva/Eva%20(${i})-Thumbnail.png`,
          postType: PostType[PostType.VIDEO],
          creator: evaProfile?.id,
-         creatorModel: AIProfile.modelName,
+         creatorModel: UserProfile.modelName,
          description: _hasDescription ? sampleDescriptions[_descriptionIndex] : undefined
        });
-     }
-
-
+    }
 
     await Post.insertMany(samplePosts);
 

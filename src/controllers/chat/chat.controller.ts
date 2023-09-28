@@ -1,13 +1,12 @@
 import { RequestHandler } from "express";
-import * as chatDTOs from "../../dtos/chat/chat.dtos.js";
-import { AIProfile } from "../../models/ai/ai-profile.model.js";
 import * as chatService from "../../services/chat/chat.services.js";
 
-export const getUserChats: RequestHandler = async (req, res, next) => {
-  try {
-    const { profileId } = req.params;
+export const getUserChats: RequestHandler = async (req, res, next) => {    
+  try {    
+    const user: any = req.user;
+    const userId = user["_id"];
 
-    const results = await chatService.getUserChats(profileId);
+    const results = await chatService.getUserChats(userId);
 
     return res.status(200).json(results);
   } catch (error) {
@@ -76,10 +75,13 @@ export const insertNewChatMessage: RequestHandler = async (req, res, next) => {
 */
 
 export const createNewChat: RequestHandler = async (req, res, next) => {
-  const { userId, aiProfileId } = req.body;
+  const user: any = req.user;
+  const userId = user["_id"];
+
+  const { profileId } = req.body;
 
   try {
-    const newChat = await chatService.createNewChat(userId, aiProfileId);
+    const newChat = await chatService.createNewChat(userId, profileId);
 
     res.status(201).send({
       chatId: newChat.id

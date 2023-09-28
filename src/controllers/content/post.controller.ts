@@ -1,6 +1,5 @@
 import { RequestHandler } from "express";
 import * as postService from "../../services/content/post.service.js";
-import { Types } from "mongoose";
 import { appScheme } from "../../config/app.config.js";
 
 export const getPosts: RequestHandler = async (req, res, next) => {
@@ -31,7 +30,7 @@ export const createPost: RequestHandler = async (req, res, next) => {
         const user: any = req.user;
         const userId = user["_id"];
         const { description } = req.body;
-        const file = req.file;
+        const file = req.file;        
 
         if (!file) {
             throw "No file was provided in the request.";
@@ -57,7 +56,7 @@ export const getExplorePosts: RequestHandler = async (req, res, next) => {
     }
 }
 
-export const getRecommendedPosts: RequestHandler = async (req, res, next) => {    
+export const getRecommendedPosts: RequestHandler = async (req, res, next) => {
     try {
         const user: any = req.user;
         const userId = user["_id"];

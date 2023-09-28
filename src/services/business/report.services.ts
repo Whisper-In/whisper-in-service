@@ -1,7 +1,6 @@
 import { ReportReason } from "../../models/profile/report-reason.model.js";
 import nodeMailer from "nodemailer";
 import { UserProfile } from "../../models/user/user-profile.model.js";
-import { AIProfile } from "../../models/ai/ai-profile.model.js";
 import { isFulfilled } from "../../utils/promise.js";
 import { nodeMailerHost, nodeMailerPass, nodeMailerPort, nodeMailerReceiver, nodeMailerUser } from "../../config/app.config.js";
 import Mail from "nodemailer/lib/mailer/index.js";
@@ -20,7 +19,7 @@ export const sendReport = async (userId: string, aiProfileId: string, reportReas
     try {
         const reportReasonQuery = ReportReason.findOne({ reportReasonCode })
         const userQuery = UserProfile.findOne({ _id: userId });
-        const aiProfileQuery = AIProfile.findOne({ _id: aiProfileId });
+        const aiProfileQuery = UserProfile.findOne({ _id: aiProfileId });
 
         const results = await Promise.allSettled([
             reportReasonQuery,

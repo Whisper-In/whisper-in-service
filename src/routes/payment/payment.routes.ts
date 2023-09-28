@@ -1,6 +1,6 @@
 import express from "express";
 import { cancelSubscription, createPaymentSheet } from "../../controllers/payment/payment.controller.js";
-import { passportJWTMiddleware } from "../../middlewares/passportJWTMiddleware.js";
+import { passportJWTMiddleware } from "../../middlewares/passport-jwt.middleware.js";
 
 const router = express.Router();
 

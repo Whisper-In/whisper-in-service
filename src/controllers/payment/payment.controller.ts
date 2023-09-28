@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import * as paymentService from "../../services/payment/payment.services.js";
 import * as userService from "../../services/user/user.services.js";
-import { SubscriptionStatus } from "../../models/user/user-ai-subscription.model.js";
+import { SubscriptionStatus } from "../../models/user/user-subscriptions.model.js";
 
 export const createPaymentSheet: RequestHandler = async (req, res, next) => {
     try {
@@ -47,29 +47,28 @@ export const paymentWebhook: RequestHandler = async (req, res, next) => {
 
     const metadata = paymentIntent.metadata;
     const userId = metadata?.userId;
-    const aiProfileId = metadata?.aiProfileId;
+    const profileId = metadata?.profileId;
 
     if (!userId) {
         console.log(event.type, "User Id not found in metadata.");
         return;
     }
 
-    if (!aiProfileId) {
-        console.log(event.type, "AI Profile Id not found in metadata.");
+    if (!profileId) {
+        console.log(event.type, "Profile Id not found in metadata.");
         return;
     }
 
     switch (event.type) {
         case 'customer.subscription.created':
-        case 'payment_intent.succeeded':
-            console.log(paymentIntent)
-            userService.updateUserAISubscription(userId, aiProfileId, SubscriptionStatus.SUCCEEDED);
+        case 'payment_intent.succeeded':            
+            userService.updateUserSubscription(userId, profileId, SubscriptionStatus.SUCCEEDED);
             break;
         case 'payment_intent.payment_failed':
-            userService.updateUserAISubscription(userId, aiProfileId, SubscriptionStatus.FAILED);
+            userService.updateUserSubscription(userId, profileId, SubscriptionStatus.FAILED);
             break;
         case ' customer.subscription.deleted':
-            userService.updateUserAISubscription(userId, aiProfileId, SubscriptionStatus.DELETED);
+            userService.updateUserSubscription(userId, profileId, SubscriptionStatus.DELETED);
             break;
         default:
             console.log(`Unhandled event type ${event.type}`)

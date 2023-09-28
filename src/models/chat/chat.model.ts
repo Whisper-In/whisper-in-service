@@ -1,10 +1,8 @@
 import { Schema, model, Types } from "mongoose";
-import { AIProfile } from "../ai/ai-profile.model.js";
 import { UserProfile } from "../user/user-profile.model.js";
 
 export interface IChatProfile {
   profile: Types.ObjectId;
-  profileModel: any;
   blocked?: boolean
 }
 
@@ -14,17 +12,11 @@ export interface IChat {
   updatedAt?: Date;
 }
 
-const profileModel = {
-  type: String,
-  enum: [UserProfile.modelName, AIProfile.modelName],
-};
-
 const ChatProfileSchema = new Schema<IChatProfile>({
   profile: {
     type: Schema.Types.ObjectId,
-    refPath: "profiles.profileModel",
+    ref: UserProfile.modelName,
   },
-  profileModel,
   blocked: Boolean
 });
 

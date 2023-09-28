@@ -8,11 +8,12 @@ export interface IProfileTierDto {
 export interface IProfileDto {
     id: string;
     name: string;
-    aboutMe?: string;
+    bio?: string;
     email?: string;
     userName: string;
     avatar?: string;
     priceTiers?: IProfileTierDto[];
+    isSubscriptionOn?:boolean;
     isSubscribed?: boolean;
     isSubscriptionExpired?: boolean;
     isBlocked?: boolean;

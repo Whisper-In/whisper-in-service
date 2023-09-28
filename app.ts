@@ -14,11 +14,13 @@ import userRouter from "./src/routes/user/user.routes.js";
 import elevenLabsRouter from "./src/routes/elevenlabs/elevenlabs.routes.js";
 import reportRouter from "./src/routes/profile/report.routes.js";
 import postRouter from "./src/routes/content/post.routes.js";
+import configRouter from "./src/routes/business/config.routes.js";
 import { initPassport } from "./src/services/passport/initPassport.js";
 import { paymentWebhook } from "./src/controllers/payment/payment.controller.js";
 import https from "https";
 import fs from "fs";
 import path from "path";
+import multer from "multer";
 
 const key = fs.readFileSync(path.join(process.cwd(), "resources", "ssl certs", "key.pem"))
 const cert = fs.readFileSync(path.join(process.cwd(), "resources", "ssl certs", "cert.pem"))
@@ -125,6 +127,14 @@ app.use(
   #swagger.security = [{"bearerAuth": []}] 
   */
 )
+
+app.use(
+  "/configuration",
+  configRouter
+  /* 
+  #swagger.tags = ['Configs']
+  */
+);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOutput));
 

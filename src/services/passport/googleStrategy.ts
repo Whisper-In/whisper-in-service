@@ -4,11 +4,10 @@ import {
   Strategy as GoogleStrategy,
   VerifyCallback,
 } from "passport-google-oauth2";
-import { AIProfile } from "../../models/ai/ai-profile.model.js";
 import { Chat, IChat } from "../../models/chat/chat.model.js";
 import { UserProfile } from "../../models/user/user-profile.model.js";
 import { googleCallbackURL, googleClientID, googleClientSecret, googleWebCallbackURL } from "../../config/app.config.js";
-import { IUserAISubscription, SubscriptionStatus, UserAISubscription } from "../../models/user/user-ai-subscription.model.js";
+import { IUserSubscription, SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model.js";
 
 const googleVerification = async (
   accessToken: string,
@@ -38,37 +37,7 @@ const googleVerification = async (
       userName: (<string>profile.displayName).toLocaleLowerCase().replace(" ", "_"),
       avatar: profile.picture,
       gender: profile.gender,
-    }).save();
-
-    const defaultAiProfiles = await AIProfile.find({
-      isDefault: true,
-    });
-
-    if (defaultAiProfiles.length) {
-      Chat.create(
-        defaultAiProfiles.map<IChat>((aiProfile) => ({
-          profiles: [
-            {
-              profile: newUser.id,
-              profileModel: UserProfile.modelName,
-            },
-            {
-              profile: aiProfile.id,
-              profileModel: AIProfile.modelName
-            }
-          ],
-        }))
-      );
-
-      UserAISubscription.create(
-        defaultAiProfiles.map<IUserAISubscription>((aiProfile) => ({
-          aiProfileId: aiProfile.id,
-          tier: 0,
-          status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED],
-          userId: newUser.id
-        }))
-      )
-    }
+    }).save();   
 
     done(null, newUser);
   } catch (error) {

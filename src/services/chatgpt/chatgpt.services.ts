@@ -1,30 +1,32 @@
 import OpenAI from "openai";
 import { openAIApiKey } from "../../config/app.config.js";
-import { AIProfile } from "../../models/ai/ai-profile.model.js";
 import { CHAT_COMPLETION_TEMP } from "../../config/chatgpt.config.js";
+import { UserProfile } from "../../models/user/user-profile.model.js";
 
 const openai = new OpenAI({
   apiKey: openAIApiKey
 });
 
 export const getChatCompletion = async (
-  aiProfileId: string,
+  profileId: string,
   message: string,
   prevMessages: OpenAI.Chat.ChatCompletionMessageParam[] = []
 ) => {
   try {
-    const aiProfile = await AIProfile.findOne({ _id: aiProfileId });
+    const profile = await UserProfile.findOne({ _id: profileId });
 
-    if (!aiProfile) {
-      throw "AI profile id provided does not exists.";
+    if (!profile) {
+      throw "Profile id provided does not exists.";
     }
 
+    const characterPrompt = await profile.characterPrompt;
+
     const completion = await openai.chat.completions.create({
-      model: "gpt-4-0613",
+      model: "gpt-3.5-turbo-0301",
       messages: [
         {
           role: "system",
-          content: aiProfile.characterPrompt,
+          content: characterPrompt,
         },
         ...prevMessages,
         {
@@ -33,6 +35,7 @@ export const getChatCompletion = async (
         },
       ],
       temperature: CHAT_COMPLETION_TEMP,
+      
     });
 
     return completion.choices[0].message;

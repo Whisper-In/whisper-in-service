@@ -3,9 +3,6 @@ import AppleStrategy from "passport-apple";
 import { appleSignInCallbackURL, appleSignInKeyFileName, appleSignInKeyID, appleSignInServiceID, appleSignInWebCallbackURL, appleTeamID } from "../../config/app.config.js";
 import path from "path";
 import { UserProfile } from "../../models/user/user-profile.model.js";
-import { AIProfile } from "../../models/ai/ai-profile.model.js";
-import { Chat, IChat } from "../../models/chat/chat.model.js";
-import { IUserAISubscription, SubscriptionStatus, UserAISubscription } from "../../models/user/user-ai-subscription.model.js";
 import jwt from "jsonwebtoken";
 
 const appleVerification:AppleStrategy.VerifyFunctionWithRequest = async (req, accessToken, refreshToken, idToken, profile, cb) => {
@@ -28,37 +25,7 @@ const appleVerification:AppleStrategy.VerifyFunctionWithRequest = async (req, ac
     const newUser = await new UserProfile({
       appleId: decodedToken.sub,
       email: decodedToken.email,
-    }).save();
-
-    const defaultAiProfiles = await AIProfile.find({
-      isDefault: true,
-    });
-
-    if (defaultAiProfiles.length) {
-      Chat.create(
-        defaultAiProfiles.map<IChat>((aiProfile) => ({
-          profiles: [
-            {
-              profile: newUser.id,
-              profileModel: UserProfile.modelName,
-            },
-            {
-              profile: aiProfile.id,
-              profileModel: AIProfile.modelName
-            }
-          ],
-        }))
-      );
-
-      UserAISubscription.create(
-        defaultAiProfiles.map<IUserAISubscription>((aiProfile) => ({
-          aiProfileId: aiProfile.id,
-          tier: 0,
-          status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED],
-          userId: newUser.id
-        }))
-      )
-    }
+    }).save();    
 
     cb(null, newUser);
   } catch (error) {

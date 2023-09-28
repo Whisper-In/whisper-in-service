@@ -5,7 +5,7 @@
     "title": "REST API",
     "description": ""
   },
-  "host": "localhost:3000",
+  "host": "localhost:3001",
   "basePath": "/",
   "schemes": [
     "http"
@@ -62,20 +62,13 @@
         ]
       }
     },
-    "/chats/user-chats/{profileId}": {
+    "/chats/user-chats/chats": {
       "get": {
         "tags": [
           "Chats"
         ],
         "description": "",
-        "parameters": [
-          {
-            "name": "profileId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK"
@@ -104,9 +97,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "userId": {
-                  "example": "any"
-                },
                 "aiProfileId": {
                   "example": "any"
                 }
@@ -306,6 +296,26 @@
       }
     },
     "/auth/apple/callback": {
+      "post": {
+        "tags": [
+          "Apple"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/auth/apple/web/login": {
+      "get": {
+        "tags": [
+          "Google"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/auth/apple/web/callback": {
       "post": {
         "tags": [
           "Apple"
@@ -626,6 +636,26 @@
       }
     },
     "/user/": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
       "put": {
         "tags": [
           "User"
@@ -633,8 +663,8 @@
         "description": "",
         "parameters": [],
         "responses": {
-          "204": {
-            "description": "No Content"
+          "200": {
+            "description": "OK"
           },
           "400": {
             "description": "Bad Request"
@@ -685,23 +715,16 @@
         ]
       }
     },
-    "/user/{userId}": {
-      "get": {
+    "/user/subscription": {
+      "post": {
         "tags": [
           "User"
         ],
         "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
+        "parameters": [],
         "responses": {
-          "200": {
-            "description": "OK"
+          "201": {
+            "description": "Created"
           },
           "400": {
             "description": "Bad Request"
@@ -714,16 +737,16 @@
         ]
       }
     },
-    "/user/ai-subscription": {
-      "post": {
+    "/user/updateAvatar": {
+      "put": {
         "tags": [
           "User"
         ],
         "description": "",
         "parameters": [],
         "responses": {
-          "201": {
-            "description": "Created"
+          "200": {
+            "description": "OK"
           },
           "400": {
             "description": "Bad Request"
@@ -966,18 +989,45 @@
           }
         ]
       }
+    },
+    "/configuration/{configName}": {
+      "get": {
+        "tags": [
+          "Configs"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "configName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
     }
   },
   "swaggerDefinition": {
-    "openapi": "3.0.3",
     "info": {
       "title": "Whisper Service",
       "version": "0.0.1",
       "description": "Whisper Service for Whisper App."
     },
+    "host": "localhost:3001",
     "servers": [
       {
         "url": "https://localhost:3001"
+      },
+      {
+        "url": "https://localhost:3002"
       }
     ],
     "schemes": [

@@ -1,10 +1,9 @@
 import { Chat } from "../../models/chat/chat.model.js";
 import { Types, mongo } from "mongoose";
 import { ChatMessage } from "../../models/chat/chat-message.model.js";
-import { AIProfile, TierChatFeature } from "../../models/ai/ai-profile.model.js";
 import { IUserProfile, UserProfile } from "../../models/user/user-profile.model.js";
 import { isFulfilled } from "../../utils/promise.js";
-import { SubscriptionStatus, UserAISubscription } from "../../models/user/user-ai-subscription.model.js";
+import { SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model.js";
 import { IUserChatDto, IUserChatProfileDto } from "../../dtos/chat/chat.dtos.js";
 
 export const getUserChats = async (userId: string) => {
@@ -30,7 +29,7 @@ export const getUserChats = async (userId: string) => {
           .map<IUserChatProfileDto>((p: any) => ({
             _id: p.profile.id,
             name: p.profile.name,
-            isAI: p.profileModel == AIProfile.modelName,
+            isAI: p.profile.isAIReplyOn,
             avatar: p.profile.avatar,
             isBlocked: p.blocked
           })
@@ -80,29 +79,29 @@ export const getChat = async (userId: string, chatId: string) => {
             match: { _id: { $ne: userObjectId } },
           }
         }
-      ])
+      ]);
 
-    const aiProfileIDs = chat?.profiles
-      .filter((profile) => profile.profileModel == AIProfile.modelName)
+    const contactProfileIDs = chat?.profiles
+      .filter((profile) => profile.profile != null)
       .map((profile) => profile.profile._id.toString());
 
     const features: string[] = [];
 
-    if (aiProfileIDs?.length) {
+    if (contactProfileIDs?.length) {
       const queries = await Promise.allSettled([
-        UserAISubscription.find({ userId, aiProfileId: { $in: aiProfileIDs }, status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED] }),
-        AIProfile.find({ _id: { $in: aiProfileIDs } })
+        UserSubscription.find({ userId, subscribedUserId: { $in: contactProfileIDs }, status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED] }),
+        UserProfile.find({ _id: { $in: contactProfileIDs } })
       ]);
 
       if (isFulfilled(queries[0]) && isFulfilled(queries[1])) {
-        const userAISubscriptions = queries[0].value;
+        const userSubscriptions = queries[0].value;
 
-        if (userAISubscriptions?.length) {
-          const aiProfiles = queries[1].value;
+        if (userSubscriptions?.length) {
+          const profiles = queries[1].value;          
 
-          aiProfiles.forEach((profile) => {
-            const aiProfileSubscription = userAISubscriptions.find((subscription) => subscription.aiProfileId == profile.id);
-            const priceTier = profile.priceTiers.find((priceTier) => priceTier.tier == aiProfileSubscription?.tier);
+          profiles.forEach((profile) => {            
+            const subscriptions = userSubscriptions.find((subscription) => subscription.subscribedUserId == profile.id);
+            const priceTier = profile.priceTiers.find((priceTier) => priceTier.tier == subscriptions?.tier);
 
             if (priceTier) {
               features.push(...priceTier.features);
@@ -117,7 +116,6 @@ export const getChat = async (userId: string, chatId: string) => {
       profiles: chat?.profiles.filter((p) => p.profile != null).map((p: any) => ({
         _id: p.profile.id,
         name: p.profile.name,
-        isAI: p.profileModel == AIProfile.modelName,
         avatar: p.profile.avatar,
         isBlocked: p.blocked
       })),
@@ -144,18 +142,18 @@ export const getChatMessages = async (chatId: string) => {
   }
 };
 
-export const createNewChat = async (userId: string, aiProfileId: string) => {
+export const createNewChat = async (userId: string, contactProfileId: string) => {
   try {
-    const existingChat = await Chat.findOne({ 'profiles.profile': { $all: [userId, aiProfileId] } });
-
+    const existingChat = await Chat.findOne({ 'profiles.profile': { $all: [userId, contactProfileId] } });
+    
     if (existingChat) {
       return existingChat;
     }
 
     const newChat = new Chat({
       profiles: [
-        { profile: userId, profileModel: UserProfile.modelName },
-        { profile: aiProfileId, profileModel: AIProfile.modelName }
+        { profile: userId },
+        { profile: contactProfileId }
       ]
     });
 
@@ -173,27 +171,15 @@ export const insertNewChatMessage = async (
   message: string
 ) => {
   try {
-    const existInUserProfileQuery = UserProfile.exists({ _id: senderId });
-    const existsInAIProfileQuery = AIProfile.exists({ _id: senderId });
+    const existInUserProfile = await UserProfile.exists({ _id: senderId });
 
-    const isExistResults = await Promise.allSettled([
-      existInUserProfileQuery,
-      existsInAIProfileQuery,
-    ]);
-
-    let senderModel = "";
-    if (isFulfilled(isExistResults[0]) && isExistResults[0].value?._id) {
-      senderModel = UserProfile.modelName!;
-    } else if (isFulfilled(isExistResults[1]) && isExistResults[1].value?._id) {
-      senderModel = AIProfile.modelName!;
-    } else {
+    if (!existInUserProfile?._id) {
       throw "Sender profile id provided does not exists.";
     }
 
     const newChatMessage = new ChatMessage({
       chat: new mongo.ObjectId(chatId),
       sender: new mongo.ObjectId(senderId),
-      senderModel,
       message,
     });
 

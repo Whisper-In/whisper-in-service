@@ -1,13 +1,13 @@
 import express from "express";
 import passport from "passport";
 import * as chatController from "../../controllers/chat/chat.controller.js";
-import { passportJWTMiddleware } from "../../middlewares/passportJWTMiddleware.js";
+import { passportJWTMiddleware } from "../../middlewares/passport-jwt.middleware.js";
 
 const router = express.Router();
 
 router.get("/:chatId", passportJWTMiddleware, chatController.getChat);
 
-router.get("/user-chats/:profileId", passportJWTMiddleware, chatController.getUserChats);
+router.get("/user-chats/chats", passportJWTMiddleware, chatController.getUserChats);
 
 router.post("/user-chats/new-chat", passportJWTMiddleware, chatController.createNewChat);
 

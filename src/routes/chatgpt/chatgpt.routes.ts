@@ -1,8 +1,8 @@
 import express from "express";
 import { getChatCompletion } from "../../controllers/chatgpt/chatgpt.controller.js";
-import { passportJWTMiddleware } from "../../middlewares/passportJWTMiddleware.js";
-import { chatGPTSubscriptionMiddleware } from "../../middlewares/chatGPTSubscriptionMiddleware.js";
-import { chatBlockedMiddleware } from "../../middlewares/chatBlockedMiddleware.js";
+import { passportJWTMiddleware } from "../../middlewares/passport-jwt.middleware.js";
+import { chatGPTSubscriptionMiddleware } from "../../middlewares/chat-gpt-subscription.middleware.js";
+import { chatBlockedMiddleware } from "../../middlewares/chat-status-checker.middlerware.js";
 
 const router = express.Router();
 

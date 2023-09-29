@@ -47,7 +47,7 @@ export const getProfile = async (queryUserId: string, userId: string) => {
                 { $or: [{ expiryDate: { $gte: today } }, { expiryDate: { $exists: false } }] }]
             });
 
-            const postRelatedCountsQuery = Post.aggregate([
+            const postCountsQuery = Post.aggregate([
                 {
                     $match: { creator: queryUserObjectId }
                 },
@@ -77,13 +77,13 @@ export const getProfile = async (queryUserId: string, userId: string) => {
                 subscriptionQuery,
                 isBlockedQuery,
                 followerCountQuery,
-                postRelatedCountsQuery
+                postCountsQuery
             ]);
 
             const isSubscribed = isFulfilled(promiseResults[0]) ? promiseResults[0].value != null : false;
             const isBlocked = isFulfilled(promiseResults[1]) ? promiseResults[1].value != null : false;
             const followerCount = isFulfilled(promiseResults[2]) ? promiseResults[2].value : 0;
-            const postRelatedCounts = isFulfilled(promiseResults[3]) ? promiseResults[3].value : null;
+            const postCounts = isFulfilled(promiseResults[3]) ? promiseResults[3].value : null;
 
             const minSubscriptionFee = Number.parseFloat(minSubscriptionFeeQuery?.configValue ?? "0");
             rawResult.priceTiers.forEach((priceTier) => priceTier.price = Math.max(priceTier.price, minSubscriptionFee));
@@ -99,8 +99,8 @@ export const getProfile = async (queryUserId: string, userId: string) => {
                 isSubscribed,
                 isBlocked,
                 followerCount,
-                postCount: postRelatedCounts?.postCount,
-                totalLikeCount: postRelatedCounts?.likeCount
+                postCount: postCounts?.postCount,
+                totalLikeCount: postCounts?.likeCount
             }
         }
 

@@ -5,6 +5,9 @@ import * as elevenLabsService from "../../services/elevenlabs/elevenlabs.service
 import { multerUploadMiddleware } from "../../middlewares/multer.middleware.js";
 import { profileUploadHandler } from "../../utils/multer.js";
 import multer from "multer";
+import { Post } from "../../models/content/post.model.js";
+import { UserLikedPost } from "../../models/content/user-liked-post.model.js";
+import { isFulfilled } from "../../utils/promise.js";
 
 export const createUserSubscription = async (userId: string, profileId: string, tier: number, stripeSubscriptionId: string) => {
     try {
@@ -68,7 +71,72 @@ export const getUserProfile = async (userId: string) => {
     try {
         const result = await UserProfile.findById(userId);
 
-        return result;
+        let today = new Date();
+
+        const followerCountQuery = UserSubscription.count({
+            $and: [{
+                subscribedUserId:userId,
+                status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED]
+            },
+            { $or: [{ expiryDate: { $gte: today } }, { expiryDate: { $exists: false } }] }]
+        });
+
+        const postCountsQuery = Post.aggregate([
+            {
+                $match: { creator: userId }
+            },
+            {
+                $lookup: {
+                    from: `${UserLikedPost.modelName}s`.toLowerCase(),
+                    foreignField: "postId",
+                    localField: "_id",
+                    as: "likes"
+                }
+            },
+            {
+                $project: {
+                    likes: { $size: "$likes" }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    postCount: { $count: {} },
+                    likeCount: { $sum: "$likes" },
+                }
+            }
+        ]).then(items => items[0]);
+
+        const promiseResults = await Promise.allSettled([
+            followerCountQuery,
+            postCountsQuery
+        ]);
+
+        const followerCount = isFulfilled(promiseResults[0]) ? promiseResults[0].value : 0;
+        const postCounts = isFulfilled(promiseResults[1]) ? promiseResults[1].value : null;
+
+        return {
+            _id: result?._id,
+            name: result?.name,
+            userName: result?.userName,
+            avatar: result?.avatar,
+            email: result?.email,
+            googleId: result?.googleId,
+            stripeId: result?.stripeId,
+            isAgreeTnC: result?.isAgreeTnC,
+            priceTiers: result?.priceTiers,
+            bio: result?.bio,
+            instagram: result?.instagram,
+            youtube: result?.youtube,
+            isSubscriptionOn: result?.isSubscriptionOn,
+            stripeConnectedAccountId: result?.stripeConnectedAccountId,
+            aiDescription: result?.aiDescription,
+            voiceId: result?.voiceId,
+            voiceSampleURL: result?.voiceSampleURL,
+            followerCount,
+            postCount: postCounts?.postCount,
+            totalLikeCount: postCounts?.likeCount
+        };
     } catch (error) {
         throw error;
     }

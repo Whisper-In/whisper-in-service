@@ -5,17 +5,26 @@ import path from "path";
 import { UserProfile } from "../../models/user/user-profile.model.js";
 import jwt from "jsonwebtoken";
 
-const appleVerification:AppleStrategy.VerifyFunctionWithRequest = async (req, accessToken, refreshToken, idToken, profile, cb) => {
+const appleVerification: AppleStrategy.VerifyFunctionWithRequest = async (req, accessToken, refreshToken, idToken, profile, cb) => {
   const decodedToken: any = jwt.decode(<any>idToken);
+  const splitEmail = decodedToken.email.split("@");
+  const userName = splitEmail[0];
 
   //Get user from db or create one if it does not exists
   try {
-    const existingUser = await UserProfile.findOne({
+    let existingUser = await UserProfile.findOne({
       appleId: decodedToken.sub,
     });
 
     if (existingUser) {
-      return cb(null, existingUser);
+      if (!existingUser.userName) {
+        existingUser = await UserProfile.findByIdAndUpdate(decodedToken.sub, {
+          name: userName,
+          userName
+        }, { new: true });
+      }
+
+      return cb(null, existingUser!);
     }
   } catch (error) {
     console.log(error);
@@ -25,7 +34,9 @@ const appleVerification:AppleStrategy.VerifyFunctionWithRequest = async (req, ac
     const newUser = await new UserProfile({
       appleId: decodedToken.sub,
       email: decodedToken.email,
-    }).save();    
+      name: userName,
+      userName
+    }).save();
 
     cb(null, newUser);
   } catch (error) {

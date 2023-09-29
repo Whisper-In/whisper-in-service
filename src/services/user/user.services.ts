@@ -90,7 +90,9 @@ export const updateUserProfile = async (userProfile: IUserProfile) => {
             }]
         }
 
-        userProfile.userName = userProfile.userName.toLowerCase();
+        if (userProfile.userName) {
+            userProfile.userName = userProfile.userName.toLowerCase();
+        }
 
         const result = await UserProfile.findByIdAndUpdate(
             { _id: userProfile._id },

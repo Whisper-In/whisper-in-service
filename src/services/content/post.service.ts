@@ -180,7 +180,7 @@ export const createPost = async (userId: string, description: string, file: Expr
                 fs.rmSync(snapshotPath, { recursive: true, force: true });
             }
 
-            const snapshotBuffer = await new Promise<Buffer>((resolve, reject) => {
+            const snapshotBuffer = await new Promise<Buffer | null>((resolve, reject) => {
                 ffmpeg(file.path).takeScreenshots({
                     count: 1,
                     filename: snapshotFileName,
@@ -189,8 +189,10 @@ export const createPost = async (userId: string, description: string, file: Expr
                     .on("error", (err) => {
                         console.log("ffmpeg:", err);
                         rmSnapshot();
+
+                        resolve(null)
                     })
-                    .on("end", () => {
+                    .on("end", () => {                        
                         fs.readFile(`${snapshotPath}/${snapshotFileName}`, (err, data) => {
                             rmSnapshot();
                             resolve(data);
@@ -198,8 +200,10 @@ export const createPost = async (userId: string, description: string, file: Expr
                     });
             });
 
-            const thumbnailFile = await googleCloudSerice.uploadFile(googleStoragePostsBucketName, `${file.filename}_thumbnail`, snapshotBuffer);
-            thumbnailURL = thumbnailFile.publicUrl();
+            if (snapshotBuffer) {
+                const thumbnailFile = await googleCloudSerice.uploadFile(googleStoragePostsBucketName, `${file.filename}_thumbnail`, snapshotBuffer);
+                thumbnailURL = thumbnailFile.publicUrl();
+            }
         }
 
         const newPost = new Post({

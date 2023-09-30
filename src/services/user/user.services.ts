@@ -30,26 +30,25 @@ export const createUserSubscription = async (userId: string, profileId: string, 
             const subscriptionProfile = await UserProfile.findById(profileId);
 
             if (subscriptionProfile) {
+                const today = new Date();
                 const priceTier = subscriptionProfile.priceTiers.find(p => p.tier == tier);
 
                 if (priceTier) {
                     if (priceTier.price > 0 && !stripeSubscriptionId) {
                         throw "No payment found.";
                     }
-
-                    const today = new Date();
-
-                    const newSubscription = new UserSubscription({
-                        subscribedUserId: profileId,
-                        userId,
-                        tier,
-                        status,
-                        expiryDate: new Date(today.setFullYear(today.getFullYear() + 1)),
-                        stripeSubscriptionId
-                    });
-
-                    newSubscription.save();
                 }
+
+                const newSubscription = new UserSubscription({
+                    subscribedUserId: profileId,
+                    userId,
+                    tier,
+                    status,
+                    expiryDate: new Date(today.setFullYear(today.getFullYear() + 1)),
+                    stripeSubscriptionId
+                });
+
+                newSubscription.save();
             } else {
                 throw "Invalid profile id provided."
             }
@@ -75,7 +74,7 @@ export const getUserProfile = async (userId: string) => {
 
         const followerCountQuery = UserSubscription.count({
             $and: [{
-                subscribedUserId:userId,
+                subscribedUserId: userId,
                 status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED]
             },
             { $or: [{ expiryDate: { $gte: today } }, { expiryDate: { $exists: false } }] }]

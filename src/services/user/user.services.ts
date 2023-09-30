@@ -9,7 +9,7 @@ import { Post } from "../../models/content/post.model.js";
 import { UserLikedPost } from "../../models/content/user-liked-post.model.js";
 import { isFulfilled } from "../../utils/promise.js";
 
-export const createUserSubscription = async (userId: string, profileId: string, tier: number, stripeSubscriptionId: string) => {
+export const createUserSubscription = async (userId: string, profileId: string, tier: number, stripeSubscriptionId?: string) => {
     try {
         let status = SubscriptionStatus[stripeSubscriptionId ? SubscriptionStatus.PENDING : SubscriptionStatus.SUCCEEDED];
 

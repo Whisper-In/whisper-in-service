@@ -2,10 +2,11 @@ import { Types, mongo } from "mongoose";
 import { Post, PostType } from "../../models/content/post.model.js"
 import { UserLikedPost } from "../../models/content/user-liked-post.model.js";
 import { SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model.js";
-import * as googleCloudSerice from "../../services/google-cloud/google-cloud.service.js";
+import * as googleCloudService from "../../services/google-cloud/google-cloud.service.js";
 import { googleStoragePostsBucketName } from "../../config/app.config.js";
 import ffmpeg from "fluent-ffmpeg";
 import fs from "fs";
+import { isFulfilled } from "../../utils/promise.js";
 
 export const getRecommendedPosts = async (userId: string, size: number, filterPostIds: string[], showFollowingOnly?: boolean) => {
     try {
@@ -201,7 +202,7 @@ export const createPost = async (userId: string, description: string, file: Expr
             });
 
             if (snapshotBuffer) {
-                const thumbnailFile = await googleCloudSerice.uploadFile(googleStoragePostsBucketName, `${file.filename}_thumbnail`, snapshotBuffer);
+                const thumbnailFile = await googleCloudService.uploadFile(googleStoragePostsBucketName, `${file.filename}_thumbnail`, snapshotBuffer);
                 thumbnailURL = thumbnailFile.publicUrl();
             }
         }
@@ -222,12 +223,41 @@ export const createPost = async (userId: string, description: string, file: Expr
 
 export const deletePost = async (userId: string, postId: string) => {
     try {
-        const post = await Post.deleteOne({
-            creator: userId,
-            _id: postId
+        const post = await Post.findById(postId);
+
+        const result = await Post.deleteMany({
+            _id: postId,
+            creator: userId
         });
 
-        return post;
+        if (post) {
+            let { postURL, thumbnailURL } = post;
+            const promises: Promise<any>[] = [];
+
+            if (postURL) {
+                postURL = decodeURIComponent(postURL);
+
+                const split = postURL.split("/");
+                const postFileName = split[split.length - 1];
+
+                promises.push(googleCloudService.deleteFile(googleStoragePostsBucketName, `${userId}/${postFileName}`));
+            }
+
+            if (thumbnailURL) {
+                thumbnailURL = decodeURIComponent(thumbnailURL);
+
+                const split = thumbnailURL.split("/");
+                const thumbnailFileName = split[split.length - 1];
+                
+                promises.push(googleCloudService.deleteFile(googleStoragePostsBucketName, `${userId}/${thumbnailFileName}`));
+            }
+
+            if (promises.length) {
+                await Promise.allSettled(promises);
+            }
+        }
+
+        return result;
     } catch (error) {
         throw error;
     }

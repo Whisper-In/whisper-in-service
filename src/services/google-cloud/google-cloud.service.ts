@@ -25,7 +25,7 @@ export async function uploadFile(bucketName: string, filePath: string, buffer: B
 export async function deleteFile(bucketName: string, fileName: string) {
     try {
         const bucket = storage.bucket(bucketName);
-        const file = bucket.file(fileName);
+        const file = bucket.file(fileName);    
 
         const exists = await file.exists()
         if (exists[0]) {

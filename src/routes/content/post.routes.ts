@@ -14,6 +14,8 @@ router.post("/", [passportJWTMiddleware, multerUploadMiddleware(
         [{ name: "post", maxCount: 1 }]
 )], postController.createPost);
 
+router.delete("/:postId", passportJWTMiddleware, postController.deletePost);
+
 router.get("/explore", passportJWTMiddleware, postController.getExplorePosts);
 
 router.get("/recommended", passportJWTMiddleware, postController.getRecommendedPosts

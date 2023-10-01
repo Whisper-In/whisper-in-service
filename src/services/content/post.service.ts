@@ -190,9 +190,9 @@ export const createPost = async (userId: string, description: string, file: Expr
                         console.log("ffmpeg:", err);
                         rmSnapshot();
 
-                        resolve(null)
+                        resolve(null);
                     })
-                    .on("end", () => {                        
+                    .on("end", () => {
                         fs.readFile(`${snapshotPath}/${snapshotFileName}`, (err, data) => {
                             rmSnapshot();
                             resolve(data);
@@ -215,6 +215,19 @@ export const createPost = async (userId: string, description: string, file: Expr
         });
 
         return await newPost.save();
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const deletePost = async (userId: string, postId: string) => {
+    try {
+        const post = await Post.deleteOne({
+            creator: userId,
+            _id: postId
+        });
+
+        return post;
     } catch (error) {
         throw error;
     }
@@ -273,19 +286,21 @@ export const getPostDetail = async (userId: string, postId: string) => {
             }
         ]).then(items => items[0]);
 
-        const isFollowing = await UserSubscription.exists({
-            userId, aiProfileId: result.creator
-        }).then(item => item?._id != null);
+        if (result) {
+            const isFollowing = await UserSubscription.exists({
+                userId, subscribedUserId: result.creator
+            }).then(item => item?._id != null);
 
-        await Post.populate(result, {
-            path: "creator",
-            select: {
-                _id: true,
-                userName: true,
-                avatar: true,
-                isFollowing: { $eq: [true, isFollowing] }
-            },
-        });
+            await Post.populate(result, {
+                path: "creator",
+                select: {
+                    _id: true,
+                    userName: true,
+                    avatar: true,
+                    isFollowing: { $eq: [true, isFollowing] }
+                },
+            });
+        }
 
         return result;
     } catch (error) {

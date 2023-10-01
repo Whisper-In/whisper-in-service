@@ -30,7 +30,7 @@ export const createPost: RequestHandler = async (req, res, next) => {
         const user: any = req.user;
         const userId = user["_id"];
         const { description } = req.body;
-        const file = req.file;        
+        const file = req.file;
 
         if (!file) {
             throw "No file was provided in the request.";
@@ -41,6 +41,20 @@ export const createPost: RequestHandler = async (req, res, next) => {
         return res.status(201).send(result);
     } catch (error) {
         return res.status(400).json({ error });
+    }
+}
+
+export const deletePost: RequestHandler = async (req, res, next) => {
+    try {
+        const user: any = req.user;
+        const userId = user['_id'];
+        const postId = req.params.postId;
+
+        const result = await postService.deletePost(userId, postId);
+
+        return res.status(200).send(result);
+    } catch (error) {
+        return res.status(400).json({ error })
     }
 }
 

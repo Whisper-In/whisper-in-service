@@ -2,10 +2,9 @@ import { Schema, model, Types } from "mongoose";
 import { UserProfile } from "../user/user-profile.model.js";
 
 interface IChatMessage {
-  chat: Types.ObjectId;
+  chatId: Types.ObjectId;
   message: string;
   isAudio?: boolean;
-  audioId?: number;
   sender: Types.ObjectId;
   createdAt?: Date,
   updatedAt?: Date
@@ -13,9 +12,10 @@ interface IChatMessage {
 
 const ChatMessageSchema = new Schema<IChatMessage>(
   {
-    chat: { type: Schema.Types.ObjectId, ref: "Chat" },
+    chatId: Types.ObjectId,
     message: String,
-    sender: { type: Schema.Types.ObjectId, ref: UserProfile.modelName },
+    isAudio: Boolean,
+    sender: { type: Schema.Types.ObjectId, ref: UserProfile.modelName },  
   },
   { timestamps: true }
 );

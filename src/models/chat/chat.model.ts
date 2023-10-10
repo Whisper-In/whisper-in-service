@@ -8,6 +8,7 @@ export interface IChatProfile {
 
 export interface IChat {
   profiles: IChatProfile[];
+  isAudioOn?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -23,6 +24,7 @@ const ChatProfileSchema = new Schema<IChatProfile>({
 const ChatSchema = new Schema<IChat>(
   {
     profiles: { type: [ChatProfileSchema] },
+    isAudioOn: Boolean
   },
   { timestamps: true }
 );

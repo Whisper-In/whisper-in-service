@@ -1,41 +1,66 @@
 import { Chat } from "../../models/chat/chat.model.js";
-import { Types, mongo } from "mongoose";
+import { mongo } from "mongoose";
 import { ChatMessage } from "../../models/chat/chat-message.model.js";
-import { IUserProfile, UserProfile } from "../../models/user/user-profile.model.js";
+import { UserProfile } from "../../models/user/user-profile.model.js";
 import { isFulfilled } from "../../utils/promise.js";
 import { SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model.js";
-import { IUserChatDto, IUserChatProfileDto } from "../../dtos/chat/chat.dtos.js";
+import axios from "axios";
+import { whisperinChatServiceURL } from "../../config/app.config.js";
+import { profile } from "console";
 
 export const getUserChats = async (userId: string) => {
   try {
     const userObjectId = new mongo.ObjectId(userId);
-    const result = await Chat.find({
-      profiles: { $elemMatch: { profile: userObjectId } },
-    }).populate([
+    const results = await Chat.aggregate([
       {
-        path: "profiles",
-        populate: {
-          path: "profile",
-          match: { _id: { $ne: userObjectId } },
+        $match: {
+          profiles: { $elemMatch: { profile: userObjectId } }
+        }
+      },
+      {
+        $lookup: {
+          from: `${ChatMessage.modelName}s`.toLowerCase(),
+          localField: "_id",
+          foreignField: "chatId",
+          as: "lastMessage",
+          pipeline: [
+            {
+              $sort: { createAt: -1 }
+            },
+            {
+              $limit: 1
+            }
+          ]
+        }
+      },
+      {
+        $project: {
+          _id: false,
+          chatId: "$_id",
+          isAudioOn: true,
+          lastMessage: { $last: "$lastMessage" },
+          profiles: true,
         }
       }
     ]);
 
-    return result.map<IUserChatDto>((result) => {
-      return {
-        chatId: result.id,
-        profiles: result.profiles
-          .filter((p) => p.profile != null)
-          .map<IUserChatProfileDto>((p: any) => ({
-            _id: p.profile.id,
-            name: p.profile.name,
-            isAI: p.profile.isAIReplyOn,
-            avatar: p.profile.avatar,
-            isBlocked: p.blocked
-          })
-          ),
-      };
+    await Chat.populate(results, {
+      path: "profiles",
+      populate: {
+        path: "profile",
+        match: { _id: { $ne: userObjectId } }
+      }
     });
+
+    results.forEach((r) => {
+      r.profiles = r.profiles
+        .filter((p: any) => p.profile != null)
+        .map((p: any) => ({
+          ...p.profile._doc
+        }));
+    });
+
+    return results;
   } catch (error) {
     throw error;
   }
@@ -97,9 +122,9 @@ export const getChat = async (userId: string, chatId: string) => {
         const userSubscriptions = queries[0].value;
 
         if (userSubscriptions?.length) {
-          const profiles = queries[1].value;          
+          const profiles = queries[1].value;
 
-          profiles.forEach((profile) => {            
+          profiles.forEach((profile) => {
             const subscriptions = userSubscriptions.find((subscription) => subscription.subscribedUserId == profile.id);
             const priceTier = profile.priceTiers.find((priceTier) => priceTier.tier == subscriptions?.tier);
 
@@ -128,15 +153,30 @@ export const getChat = async (userId: string, chatId: string) => {
   }
 };
 
-export const getChatMessages = async (chatId: string) => {
+export const getChatMessages = async (chatId: string, pageIndex: number, messageCount: number) => {
   try {
     const chatObjectId = new mongo.ObjectId(chatId);
 
-    const body = ChatMessage.find({
-      chat: chatObjectId,
-    }).sort({ createdAt: 1 });
+    const totalMessages = await ChatMessage.count({ chatId: chatObjectId });
 
-    return body;
+    const messages = await ChatMessage.find({
+      chatId: chatObjectId,
+    }).sort({ createdAt: "desc" })
+      .skip(pageIndex * messageCount)
+      .limit(messageCount)
+      .transform((messages) => messages.map((m) => ({
+        message: m.message,
+        sender: m.sender,
+        isAudio: m.isAudio,
+        createdAt: m.createdAt,
+        updatedAt: m.updatedAt
+      })));
+
+    return {
+      chatId,
+      messages,
+      totalMessages
+    };
   } catch (error) {
     throw error;
   }
@@ -145,7 +185,7 @@ export const getChatMessages = async (chatId: string) => {
 export const createNewChat = async (userId: string, contactProfileId: string) => {
   try {
     const existingChat = await Chat.findOne({ 'profiles.profile': { $all: [userId, contactProfileId] } });
-    
+
     if (existingChat) {
       return existingChat;
     }
@@ -171,6 +211,12 @@ export const insertNewChatMessage = async (
   message: string
 ) => {
   try {
+    const chat = await Chat.findById(chatId);
+
+    if (!chat?._id) {
+      throw "Invalid chat id provided.";
+    }
+
     const existInUserProfile = await UserProfile.exists({ _id: senderId });
 
     if (!existInUserProfile?._id) {
@@ -178,9 +224,10 @@ export const insertNewChatMessage = async (
     }
 
     const newChatMessage = new ChatMessage({
-      chat: new mongo.ObjectId(chatId),
+      chatId: new mongo.ObjectId(chatId),
       sender: new mongo.ObjectId(senderId),
       message,
+      isAudio: chat.isAudioOn
     });
 
     const savedChatMessage = await newChatMessage.save();
@@ -190,3 +237,35 @@ export const insertNewChatMessage = async (
     throw error;
   }
 };
+
+export const getChatCompletionWithVectorDB = async (
+  chatId: string,
+  recipientUserId: string,
+  userPrompt: string) => {
+  try {
+    const recipient = await UserProfile.findById(recipientUserId);
+
+    if (!recipient) {
+      throw "Invalid repicipient user id.";
+    }
+
+    const messageId = new mongo.ObjectId();
+
+    const result = await axios.post(`${whisperinChatServiceURL}/chat`, {
+      serviceId: "emb-qry-chat",
+      chatId,
+      recipientUserId,
+      messageId,
+      userPrompt,
+      systemPrompt: await recipient.characterPrompt
+    });
+
+    return {
+      messageId,
+      message: result.data
+    };
+  } catch (error) {
+    throw error;
+  }
+}
+

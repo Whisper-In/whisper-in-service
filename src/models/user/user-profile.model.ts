@@ -85,8 +85,8 @@ UserProfileSchema.virtual("characterPrompt").get(async function () {
   const characterPrompt = await BusinessConfig.findOne({ configName: "BASE_CHARACTER_PROMPT" });
   
   return characterPrompt?.configValue
-    .replace(namePlaceholder, this.name)
-    .replace(descriptionPlaceholder, this.aiDescription);
+    .replaceAll(namePlaceholder, this.name)
+    .replaceAll(descriptionPlaceholder, this.aiDescription);
 });
 
 UserProfileSchema.virtual('posts', {

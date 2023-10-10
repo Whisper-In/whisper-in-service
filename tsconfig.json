@@ -9,8 +9,15 @@
     "strict": true,
     "skipLibCheck": true,
     "module": "NodeNext",
+    "lib": [
+      "ES2021.String",
+      "DOM"
+    ]
   },
-  "exclude": ["scripts", "datasets"],
+  "exclude": [
+    "scripts",
+    "datasets"
+  ],
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node",

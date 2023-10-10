@@ -62,6 +62,50 @@
         ]
       }
     },
+    "/chats/audio-reply/{chatId}": {
+      "put": {
+        "tags": [
+          "Chats"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "chatId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "chatId": {
+                  "example": "any"
+                },
+                "isAudioOn": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/chats/user-chats/chats": {
       "get": {
         "tags": [
@@ -214,10 +258,10 @@
             "schema": {
               "type": "object",
               "properties": {
-                "chatId": {
+                "profileId": {
                   "example": "any"
                 },
-                "profileId": {
+                "chatId": {
                   "example": "any"
                 },
                 "message": {
@@ -278,7 +322,7 @@
         ]
       }
     },
-    "/chats/chat-messages/insert": {
+    "/chats/chat-messages/message": {
       "post": {
         "tags": [
           "Chats"
@@ -333,6 +377,9 @@
               "type": "object",
               "properties": {
                 "profileId": {
+                  "example": "any"
+                },
+                "chatId": {
                   "example": "any"
                 },
                 "aiProfileId": {

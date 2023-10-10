@@ -6,7 +6,6 @@ import { isFulfilled } from "../../utils/promise.js";
 import { SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model.js";
 import axios from "axios";
 import { whisperinChatServiceURL } from "../../config/app.config.js";
-import { profile } from "console";
 
 export const getUserChats = async (userId: string) => {
   try {
@@ -25,10 +24,7 @@ export const getUserChats = async (userId: string) => {
           as: "lastMessage",
           pipeline: [
             {
-              $sort: { createAt: -1 }
-            },
-            {
-              $limit: 1
+              $sort: { createAt: 1 }
             }
           ]
         }
@@ -84,6 +80,18 @@ export const updateChatProfileBlockStatus = async (userId: string, aiProfileId: 
 
       await result?.save();
     }
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const setChatAudioReply = async (chatId: string, isAudioOn: boolean) => {
+  try {
+    const result = await Chat.findByIdAndUpdate(chatId, {
+      isAudioOn
+    }, { new: true });
 
     return result;
   } catch (error) {
@@ -165,6 +173,7 @@ export const getChatMessages = async (chatId: string, pageIndex: number, message
       .skip(pageIndex * messageCount)
       .limit(messageCount)
       .transform((messages) => messages.map((m) => ({
+        messageId: m._id,
         message: m.message,
         sender: m.sender,
         isAudio: m.isAudio,

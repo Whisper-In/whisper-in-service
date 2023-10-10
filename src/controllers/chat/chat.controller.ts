@@ -2,8 +2,6 @@ import { RequestHandler } from "express";
 import * as chatService from "../../services/chat/chat.services.js";
 import * as chatGPTService from "../../services/chatgpt/chatgpt.services.js";
 import { ChatCompletionMessageParam } from "openai/resources/chat/index.mjs";
-import { mongo } from "mongoose";
-import { IChatMessage } from "../../models/chat/chat-message.model.js";
 
 export const getUserChats: RequestHandler = async (req, res, next) => {
   try {
@@ -38,7 +36,7 @@ export const getChatMessages: RequestHandler = async (req, res, next) => {
   try {
     const { chatId } = req.params;
     const { pageIndex, messageCount } = req.query;
-    
+
     const results = await chatService.getChatMessages(chatId, Number.parseInt(pageIndex as string), Number.parseInt(messageCount as string));
 
     return res.status(200).json(results);
@@ -93,7 +91,7 @@ export const getChatCompletion: RequestHandler = async (req, res, next) => {
   const userId = user["_id"];
   const { chatId, profileId, message } = req.body;
 
-  const today = new Date();
+  let replyMessage = "";
 
   try {
     const result = await chatService.getChatMessages(chatId, 0, 250);
@@ -103,26 +101,20 @@ export const getChatCompletion: RequestHandler = async (req, res, next) => {
       role: message.sender == userId ? "user" : "assistant"
     }))
 
-    const chatCompletionResult = await chatGPTService.getChatCompletion(profileId, message, prevMessages);    
+    const chatCompletionResult = await chatGPTService.getChatCompletion(profileId, message, prevMessages);
 
     if (chatCompletionResult.content) {
-      const result = await chatService.insertNewChatMessage(chatId, profileId, chatCompletionResult.content);
-      
-      res.status(200).json(result);
+      replyMessage = chatCompletionResult.content;
     } else {
-      throw "ChatGPT returned empty content."
+      replyMessage = "ChatGPT returned empty content.";
     }
   } catch (error) {
-    res.status(200).json(<IChatMessage>{
-      chatId: chatId,
-      messageId: new mongo.ObjectId(),
-      message: "Sorry. Could you please repeat that?",
-      sender: profileId,
-      createdAt: today,
-      updatedAt: today,
-      error
-    });
+    replyMessage = "Sorry. Could you please repeat that?";
   }
+
+  const result = await chatService.insertNewChatMessage(chatId, profileId, replyMessage);
+
+  res.status(200).json(result);
 }
 
 export const getChatCompletionWithVectorDB: RequestHandler = async (req, res, next) => {
@@ -136,6 +128,18 @@ export const getChatCompletionWithVectorDB: RequestHandler = async (req, res, ne
       recipientUserId,
       message
     );
+
+    res.status(200).send(result);
+  } catch (error) {
+    res.status(400).json({ error });
+  }
+}
+
+export const setChatAudioReply: RequestHandler = async (req, res, next) => {
+  try {
+    const { chatId } = req.params;
+    const { isAudioOn } = req.body;
+    const result = await chatService.setChatAudioReply(chatId, isAudioOn);
 
     res.status(200).send(result);
   } catch (error) {

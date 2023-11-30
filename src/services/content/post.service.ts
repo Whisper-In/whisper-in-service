@@ -292,8 +292,8 @@ export const getPostDetail = async (userId: string, postId: string) => {
         ]).then(items => items[0]);
 
         if (result) {
-            const isFollowing = await UserSubscription.exists({
-                userId, subscribedUserId: result.creator
+            const isFollowing = await UserFollowing.exists({
+                userId, followedUserId: result.creator
             }).then(item => item?._id != null);
 
             await Post.populate(result, {

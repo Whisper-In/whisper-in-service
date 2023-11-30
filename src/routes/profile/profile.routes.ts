@@ -4,12 +4,12 @@ import { passportJWTMiddleware } from "../../middlewares/passport-jwt.middleware
 
 const router = express.Router();
 
+router.get("/search", passportJWTMiddleware, profileController.searchProfiles);
+
 router.get(
   "/:profileId",
   passportJWTMiddleware,
   profileController.getProfile
 );
-
-router.get("/search/:query", passportJWTMiddleware, profileController.searchProfiles);
 
 export default router;

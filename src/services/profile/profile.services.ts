@@ -7,6 +7,7 @@ import { isFulfilled } from "../../utils/promise.js";
 import { Post } from "../../models/content/post.model.js";
 import { UserLikedPost } from "../../models/content/user-liked-post.model.js";
 import { BusinessConfig } from "../../models/business/business-configs.model.js";
+import { UserFollowing } from "../../models/user/user-following.model.js";
 
 export const getProfile = async (queryUserId: string, userId: string) => {
     try {
@@ -30,6 +31,11 @@ export const getProfile = async (queryUserId: string, userId: string) => {
                 ]
             });
 
+            const followingQuery = UserFollowing.exists({
+                userId,
+                followedUserId: queryUserId
+            });
+
             const isBlockedQuery = Chat.exists({
                 'profiles.profile': {
                     $all: [userObjectId, queryUserObjectId],
@@ -39,13 +45,7 @@ export const getProfile = async (queryUserId: string, userId: string) => {
                 }
             });
 
-            const followerCountQuery = UserSubscription.count({
-                $and: [{
-                    queryUserId,
-                    status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED]
-                },
-                { $or: [{ expiryDate: { $gte: today } }, { expiryDate: { $exists: false } }] }]
-            });
+            const followerCountQuery = UserFollowing.count({ followedUserId: queryUserId });
 
             const postCountsQuery = Post.aggregate([
                 {
@@ -77,13 +77,15 @@ export const getProfile = async (queryUserId: string, userId: string) => {
                 subscriptionQuery,
                 isBlockedQuery,
                 followerCountQuery,
-                postCountsQuery
+                postCountsQuery,
+                followingQuery
             ]);
 
             const isSubscribed = isFulfilled(promiseResults[0]) ? promiseResults[0].value != null : false;
             const isBlocked = isFulfilled(promiseResults[1]) ? promiseResults[1].value != null : false;
             const followerCount = isFulfilled(promiseResults[2]) ? promiseResults[2].value : 0;
             const postCounts = isFulfilled(promiseResults[3]) ? promiseResults[3].value : null;
+            const isFollowing = isFulfilled(promiseResults[4]) ? promiseResults[4].value != null : false;
 
             const minSubscriptionFee = Number.parseFloat(minSubscriptionFeeQuery?.configValue ?? "0");
             rawResult.priceTiers.forEach((priceTier) => priceTier.price = Math.max(priceTier.price, minSubscriptionFee));
@@ -97,6 +99,7 @@ export const getProfile = async (queryUserId: string, userId: string) => {
                 priceTiers: rawResult.priceTiers,
                 isSubscriptionOn: rawResult.isSubscriptionOn,
                 isSubscribed,
+                isFollowing,
                 isBlocked,
                 followerCount,
                 postCount: postCounts?.postCount,

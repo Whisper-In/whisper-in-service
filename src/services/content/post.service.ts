@@ -6,22 +6,18 @@ import * as googleCloudService from "../../services/google-cloud/google-cloud.se
 import { googleStoragePostsBucketName } from "../../config/app.config.js";
 import ffmpeg from "fluent-ffmpeg";
 import fs from "fs";
-import { isFulfilled } from "../../utils/promise.js";
+import { UserProfile } from "../../models/user/user-profile.model.js";
+import { UserFollowing } from "../../models/user/user-following.model.js";
 
-export const getRecommendedPosts = async (userId: string, size: number, filterPostIds: string[], showFollowingOnly?: boolean) => {
+export const getRecommendedPosts = async (userId: string, size: number, showFollowingOnly?: boolean) => {
     try {
-        const following = await UserSubscription.find({
+        const following = await UserFollowing.find({
             userId,
-            status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED]
         }).select({
-            subscribedUserId: true
-        }).transform((results) => results.map(r => r.subscribedUserId));
+            followedUserId: true
+        }).transform((results) => results.map(r => r.followedUserId));
 
-        const filterPostObjectIds = filterPostIds?.map(id => new Types.ObjectId(id)) ?? [];
-
-        let matchContdition: any = {
-            _id: { $nin: filterPostObjectIds }
-        }
+        let matchContdition: any = {}
 
         if (showFollowingOnly) {
             matchContdition.creator = { $in: following }
@@ -32,36 +28,14 @@ export const getRecommendedPosts = async (userId: string, size: number, filterPo
                 $match: matchContdition
             },
             {
-                $lookup: {
-                    from: `${UserLikedPost.modelName}s`.toLowerCase(),
-                    localField: "_id",
-                    foreignField: "postId",
-                    as: "likes"
-                }
+                $sample: { size }
             },
             {
                 $project: {
-                    postURL: 1,
-                    postType: 1,
-                    description: 1,
-                    creator: 1,
-                    creatorModel: 1,
-                    likeCount: { $size: "$likes" },
-                    isLiked: { $in: [userId, "$likes.userId"] }
+                    _id: 1
                 }
-            },
-            { $sample: { size } }
+            }
         ]);
-
-        await Post.populate(results, {
-            path: "creator",
-            select: {
-                _id: true,
-                userName: true,
-                avatar: true,
-                isFollowing: { $in: ["$_id", following] }
-            },
-        });
 
         return results;
     } catch (error) {
@@ -105,6 +79,10 @@ export const getPosts = async (
             creator: profileId,
             postType
         });
+
+        if (Math.ceil(totalPosts / itemsPerLoad) <= pageIndex) {
+            return []
+        }
 
         const results = await Post.aggregate([
             {
@@ -151,10 +129,7 @@ export const getPosts = async (
             },
         });
 
-        return {
-            posts: results,
-            totalPosts
-        };
+        return results;
     } catch (error) {
         console.log(error)
         throw error;
@@ -248,7 +223,7 @@ export const deletePost = async (userId: string, postId: string) => {
 
                 const split = thumbnailURL.split("/");
                 const thumbnailFileName = split[split.length - 1];
-                
+
                 promises.push(googleCloudService.deleteFile(googleStoragePostsBucketName, `${userId}/${thumbnailFileName}`));
             }
 

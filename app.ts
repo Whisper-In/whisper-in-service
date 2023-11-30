@@ -1,11 +1,11 @@
 import express from "express";
 import swaggerUi from "swagger-ui-express";
 import { connectMongoDB } from "./src/database/mongodb.js";
-import { httpsPort, port } from "./src/config/app.config.js";
+import { frontendOrigin, httpsPort, port } from "./src/config/app.config.js";
 import chatGPTRouter from "./src/routes/chatgpt/chatgpt.routes.js";
 import chatRouter from "./src/routes/chat/chat.routes.js";
 import cors from "cors";
-import swaggerOutput from "./swagger_output.json" assert { type: "json" };
+import swaggerOutput from "./swagger_output.json" assert {type: "json"};
 import googleRouter from "./src/routes/auth/google.routes.js";
 import appleRouter from "./src/routes/auth/apple.routes.js";
 import profileRouter from "./src/routes/profile/profile.routes.js";
@@ -20,7 +20,6 @@ import { paymentWebhook } from "./src/controllers/payment/payment.controller.js"
 import https from "https";
 import fs from "fs";
 import path from "path";
-import multer from "multer";
 
 const key = fs.readFileSync(path.join(process.cwd(), "resources", "ssl certs", "key.pem"))
 const cert = fs.readFileSync(path.join(process.cwd(), "resources", "ssl certs", "cert.pem"))
@@ -29,7 +28,11 @@ const app = express();
 
 initPassport(app);
 
-app.use(cors());
+app.use(cors({
+  origin: frontendOrigin,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"]
+}));
 
 app.post(
   "/payment/webhook",

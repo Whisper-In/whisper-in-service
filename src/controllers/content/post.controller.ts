@@ -74,11 +74,10 @@ export const getRecommendedPosts: RequestHandler = async (req, res, next) => {
     try {
         const user: any = req.user;
         const userId = user["_id"];
-        const filterPostIds = req.query.filterPostIds;
         const showFollowingOnly: boolean = req.query.showFollowingOnly == "true";
         let size = req.query.size ? parseInt(req.query.size as string) : 5;
 
-        const results = await postService.getRecommendedPosts(userId, size, filterPostIds as string[], showFollowingOnly);
+        const results = await postService.getRecommendedPosts(userId, size, showFollowingOnly);
 
         return res.status(200).send(results);
     } catch (error) {

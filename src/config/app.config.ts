@@ -35,3 +35,4 @@ export const googleStoragePostsBucketName = <string>process.env.GOOGLE_STORAGE_P
 export const googleStorageProfileBucketName = <string>process.env.GOOGLE_STORAGE_PROFILE_BUCKET_NAME;
 export const googleCloudKeyFileName= <string>process.env.GOOGLE_CLOUD_KEYFILE_NAME;
 export const whisperinChatServiceURL=<string>process.env.WHISPERIN_CHAT_SERVICE_URL;
+export const frontendOrigin=<string>process.env.FRONTEND_ORIGIN

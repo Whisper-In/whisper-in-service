@@ -1,5 +1,5 @@
 import swaggerAutogen from "swagger-autogen";
-import { swaggerOptions } from "./src/config/swagger.config.js";
+import { swaggerOptions } from "./src/config/swagger.config.js" assert {type: "json"};
 
 const outputFile = './swagger_output.json';
 const routes = ['./app.ts'];

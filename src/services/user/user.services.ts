@@ -8,6 +8,7 @@ import multer from "multer";
 import { Post } from "../../models/content/post.model.js";
 import { UserLikedPost } from "../../models/content/user-liked-post.model.js";
 import { isFulfilled } from "../../utils/promise.js";
+import { UserFollowing } from "../../models/user/user-following.model.js";
 
 export const createUserSubscription = async (userId: string, profileId: string, tier: number, stripeSubscriptionId?: string) => {
     try {
@@ -255,6 +256,31 @@ export const updateUserVoice = async (userId: string, file?: Express.Multer.File
         return result;
     } catch (error) {
         console.log(error)
+        throw error;
+    }
+}
+
+export const followUser = async (userId: string, followedUserId: string) => {
+    try {
+        const userFollowing = new UserFollowing({
+            userId,
+            followedUserId
+        });
+
+        await userFollowing.save();
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const unfollowUser = async (userId: string, followedUserId: string) => {
+    try {
+        const result = await UserFollowing.deleteOne({ userId, followedUserId });
+
+        if (result.deletedCount <= 0) {
+            throw "No following record found."
+        }
+    } catch (error) {
         throw error;
     }
 }

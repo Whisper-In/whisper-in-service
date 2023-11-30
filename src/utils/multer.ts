@@ -1,12 +1,12 @@
 
-import MulterGoogleCloudStorage from "multer-google-storage";
+import MulterGoogleCloudStorage from "multer-cloud-storage";
 import multer from "multer";
 import { googleCloudKeyFileName, googleStoragePostsBucketName, googleStorageProfileBucketName } from "../config/app.config.js";
 import path from "path";
 import gcpKeyJson from "../../resources/gcp-key.json" assert {type: "json"};
 
 const defaultStorageConfig = {
-    autoRetry: true,
+    retryOptions: { autoRetry: true },
     projectId: gcpKeyJson.project_id,
     keyFilename: path.join(process.cwd(), 'resources', googleCloudKeyFileName),
 }

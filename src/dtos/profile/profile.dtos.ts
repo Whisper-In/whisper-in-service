@@ -13,8 +13,9 @@ export interface IProfileDto {
     userName: string;
     avatar?: string;
     priceTiers?: IProfileTierDto[];
-    isSubscriptionOn?:boolean;
+    isSubscriptionOn?: boolean;
     isSubscribed?: boolean;
+    isFollowing?: boolean;
     isSubscriptionExpired?: boolean;
     isBlocked?: boolean;
     postCount?: number;

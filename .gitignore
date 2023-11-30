@@ -1,5 +1,6 @@
 node_modules/
 dist/
+datasets/sample-posts
 
 .env
 .env-*

@@ -1,7 +1,7 @@
 import { Chat } from "../../models/chat/chat.model.js";
 import { mongo } from "mongoose";
 import { ChatMessage } from "../../models/chat/chat-message.model.js";
-import { UserProfile } from "../../models/user/user-profile.model.js";
+import { IUserProfile, UserProfile } from "../../models/user/user-profile.model.js";
 import { isFulfilled } from "../../utils/promise.js";
 import { SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model.js";
 import axios from "axios";
@@ -110,50 +110,35 @@ export const getChat = async (userId: string, chatId: string) => {
           populate: {
             path: "profile",
             match: { _id: { $ne: userObjectId } },
+            select: {
+              id: 1,
+              name: 1,
+              avatar: 1,
+              isBlocked: 1,
+              isSubscriptionOn: 1,
+              priceTiers: 1
+            }
           }
         }
       ]);
 
-    const contactProfileIDs = chat?.profiles
-      .filter((profile) => profile.profile != null)
-      .map((profile) => profile.profile._id.toString());
+    const profile: IUserProfile = <any>chat?.profiles.find((p) => p.profile != null)?.profile;
 
     const features: string[] = [];
 
-    if (contactProfileIDs?.length) {
-      const queries = await Promise.allSettled([
-        UserSubscription.find({ userId, subscribedUserId: { $in: contactProfileIDs }, status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED] }),
-        UserProfile.find({ _id: { $in: contactProfileIDs } })
-      ]);
+    const userSubscription = await UserSubscription.findOne({ userId, subscribedUserId: profile?._id, status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED] });
+    const priceTier = profile.priceTiers.find((priceTier) => priceTier.tier == userSubscription?.tier);
 
-      if (isFulfilled(queries[0]) && isFulfilled(queries[1])) {
-        const userSubscriptions = queries[0].value;
-
-        if (userSubscriptions?.length) {
-          const profiles = queries[1].value;
-
-          profiles.forEach((profile) => {
-            const subscriptions = userSubscriptions.find((subscription) => subscription.subscribedUserId == profile.id);
-            const priceTier = profile.priceTiers.find((priceTier) => priceTier.tier == subscriptions?.tier);
-
-            if (priceTier) {
-              features.push(...priceTier.features);
-            }
-          });
-        }
-      }
+    if (priceTier) {
+      features.push(...priceTier.features);
     }
 
     return {
       chatId: chat?.id,
-      profiles: chat?.profiles.filter((p) => p.profile != null).map((p: any) => ({
-        _id: p.profile.id,
-        name: p.profile.name,
-        avatar: p.profile.avatar,
-        isBlocked: p.blocked
-      })),
+      profile,
       createdAt: chat?.createdAt,
       updatedAt: chat?.updatedAt,
+      isAudioOn: chat?.isAudioOn,
       features
     };
   } catch (error) {
@@ -161,7 +146,7 @@ export const getChat = async (userId: string, chatId: string) => {
   }
 };
 
-export const getChatMessages = async (chatId: string, pageIndex: number, messageCount: number) => {
+export const getChatMessages = async (chatId: string, userId: string, pageIndex: number, messageCount: number) => {
   try {
     const chatObjectId = new mongo.ObjectId(chatId);
 
@@ -176,6 +161,7 @@ export const getChatMessages = async (chatId: string, pageIndex: number, message
         messageId: m._id,
         message: m.message,
         sender: m.sender,
+        isSender: m.sender.toString() == userId,
         isAudio: m.isAudio,
         createdAt: m.createdAt,
         updatedAt: m.updatedAt
@@ -187,6 +173,7 @@ export const getChatMessages = async (chatId: string, pageIndex: number, message
       totalMessages
     };
   } catch (error) {
+    console.log(error)
     throw error;
   }
 };
@@ -221,6 +208,8 @@ export const insertNewChatMessage = async (
 ) => {
   try {
     const chat = await Chat.findById(chatId);
+
+    console.log("senderId:", chatId, senderId, message)
 
     if (!chat?._id) {
       throw "Invalid chat id provided.";

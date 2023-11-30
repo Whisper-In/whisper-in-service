@@ -22,7 +22,7 @@ export const getProfile = async (queryUserId: string, userId: string) => {
         if (rawResult) {
             let today = new Date();
 
-            const subscriptionQuery = UserSubscription.exists({
+            const isSubscribed = await UserSubscription.exists({
                 $and: [
                     { subscribedUserId: queryUserId },
                     { userId },
@@ -31,12 +31,12 @@ export const getProfile = async (queryUserId: string, userId: string) => {
                 ]
             });
 
-            const followingQuery = UserFollowing.exists({
+            const isFollowing = await UserFollowing.exists({
                 userId,
                 followedUserId: queryUserId
             });
 
-            const isBlockedQuery = Chat.exists({
+            const isBlocked = await Chat.exists({
                 'profiles.profile': {
                     $all: [userObjectId, queryUserObjectId],
                 },
@@ -45,9 +45,9 @@ export const getProfile = async (queryUserId: string, userId: string) => {
                 }
             });
 
-            const followerCountQuery = UserFollowing.count({ followedUserId: queryUserId });
+            const followerCount = await UserFollowing.count({ followedUserId: queryUserId });
 
-            const postCountsQuery = Post.aggregate([
+            const postCounts = await Post.aggregate([
                 {
                     $match: { creator: queryUserObjectId }
                 },
@@ -73,34 +73,27 @@ export const getProfile = async (queryUserId: string, userId: string) => {
                 }
             ]).then(items => items[0]);
 
-            const promiseResults = await Promise.allSettled([
-                subscriptionQuery,
-                isBlockedQuery,
-                followerCountQuery,
-                postCountsQuery,
-                followingQuery
-            ]);
-
-            const isSubscribed = isFulfilled(promiseResults[0]) ? promiseResults[0].value != null : false;
-            const isBlocked = isFulfilled(promiseResults[1]) ? promiseResults[1].value != null : false;
-            const followerCount = isFulfilled(promiseResults[2]) ? promiseResults[2].value : 0;
-            const postCounts = isFulfilled(promiseResults[3]) ? promiseResults[3].value : null;
-            const isFollowing = isFulfilled(promiseResults[4]) ? promiseResults[4].value != null : false;
+            const chat = await Chat.findOne({
+                "profiles.profile": {
+                    $all: [userObjectId, queryUserObjectId]
+                }
+            })
 
             const minSubscriptionFee = Number.parseFloat(minSubscriptionFeeQuery?.configValue ?? "0");
             rawResult.priceTiers.forEach((priceTier) => priceTier.price = Math.max(priceTier.price, minSubscriptionFee));
 
             result = {
                 id: rawResult.id,
+                chatId: chat?.id,
                 name: rawResult.name,
                 avatar: rawResult.avatar,
                 userName: rawResult.userName,
                 bio: rawResult.bio,
                 priceTiers: rawResult.priceTiers,
                 isSubscriptionOn: rawResult.isSubscriptionOn,
-                isSubscribed,
-                isFollowing,
-                isBlocked,
+                isSubscribed: isSubscribed?._id != null,
+                isFollowing: isFollowing?._id != null,
+                isBlocked: isBlocked?._id != null,
                 followerCount,
                 postCount: postCounts?.postCount,
                 totalLikeCount: postCounts?.likeCount

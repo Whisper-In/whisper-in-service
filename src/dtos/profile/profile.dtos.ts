@@ -7,6 +7,7 @@ export interface IProfileTierDto {
 
 export interface IProfileDto {
     id: string;
+    chatId?: string;
     name: string;
     bio?: string;
     email?: string;

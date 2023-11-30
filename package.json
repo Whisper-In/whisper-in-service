@@ -9,7 +9,7 @@
     "start": "node dist/app.js",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon dist/app.js\"",
     "test": "test",
-    "swagger": "ts-node swagger.ts",
+    "swagger": "node --loader ts-node/esm swagger.ts",
     "insert-business-configs": "node --loader ts-node/esm ./scripts/business/business-configs.scripts.ts"
   },
   "author": "",

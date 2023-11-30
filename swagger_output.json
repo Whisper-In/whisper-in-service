@@ -1,14 +1,23 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "1.0.0",
-    "title": "REST API",
-    "description": ""
+    "title": "Whisper Service",
+    "version": "0.0.1",
+    "description": "Whisper Service for Whisper App."
   },
   "host": "localhost:3001",
+  "servers": [
+    {
+      "url": "https://localhost:3001"
+    },
+    {
+      "url": "https://localhost:3002"
+    }
+  ],
   "basePath": "/",
   "schemes": [
-    "http"
+    "http",
+    "https"
   ],
   "securityDefinitions": {
     "bearerAuth": {
@@ -81,9 +90,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "chatId": {
-                  "example": "any"
-                },
                 "isAudioOn": {
                   "example": "any"
                 }
@@ -534,6 +540,34 @@
         "responses": {}
       }
     },
+    "/profile/search": {
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/profile/{profileId}": {
       "get": {
         "tags": [
@@ -551,35 +585,6 @@
         "responses": {
           "200": {
             "description": "OK"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/profile/search/{query}": {
-      "get": {
-        "tags": [
-          "Profile"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "query",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
           }
         },
         "security": [
@@ -985,6 +990,62 @@
         ]
       }
     },
+    "/user/follow/{profileId}": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/content/posts/": {
       "get": {
         "tags": [
@@ -1126,11 +1187,6 @@
         "description": "",
         "parameters": [
           {
-            "name": "filterPostIds",
-            "in": "query",
-            "type": "string"
-          },
-          {
             "name": "showFollowingOnly",
             "in": "query",
             "type": "boolean"
@@ -1267,26 +1323,6 @@
         }
       }
     }
-  },
-  "swaggerDefinition": {
-    "info": {
-      "title": "Whisper Service",
-      "version": "0.0.1",
-      "description": "Whisper Service for Whisper App."
-    },
-    "host": "localhost:3001",
-    "servers": [
-      {
-        "url": "https://localhost:3001"
-      },
-      {
-        "url": "https://localhost:3002"
-      }
-    ],
-    "schemes": [
-      "http",
-      "https"
-    ]
   },
   "apis": [
     "./src/routes/**/*.ts"

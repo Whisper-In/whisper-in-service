@@ -12,7 +12,9 @@ import { UserFollowing } from "../../models/user/user-following.model.js";
 
 export const createUserSubscription = async (userId: string, profileId: string, tier: number, stripeSubscriptionId?: string) => {
     try {
-        let status = SubscriptionStatus[stripeSubscriptionId ? SubscriptionStatus.PENDING : SubscriptionStatus.SUCCEEDED];
+        // let status = SubscriptionStatus[stripeSubscriptionId ? SubscriptionStatus.PENDING : SubscriptionStatus.SUCCEEDED];
+        //Temporary set to SUCCEEDED for demo
+        let status = SubscriptionStatus[SubscriptionStatus.SUCCEEDED];
 
         const existingSubscription = await UserSubscription.exists({ userId, subscribedUserId: profileId });
 

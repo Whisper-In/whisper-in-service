@@ -40,6 +40,6 @@ export const googleWebCallback: RequestHandler = async (req, res, next) => {
   };
 
   res.redirect(
-    `${frontendOrigin}${appCallbackURL}?user=${JSON.stringify(user)}&token=${jwtToken}`
+    `${req.headers.origin}${appCallbackURL}?user=${JSON.stringify(user)}&token=${jwtToken}`
   );
 };

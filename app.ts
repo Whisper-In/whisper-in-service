@@ -139,7 +139,9 @@ app.use(
   */
 );
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOutput));
+if (process.env.NODE_ENV == "development") {
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOutput));
+}
 
 const start = async () => {
   try {

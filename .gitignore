@@ -3,6 +3,9 @@ dist/
 datasets/sample-posts
 services/
 
+resources/gcp-key.json
+resources/AuthKey_*.p8
+
 .env
 .env.old
 .env.development

@@ -10,12 +10,8 @@ export const getPosts: RequestHandler = async (req, res, next) => {
         const pageIndex = parseInt(req.query.pageIndex?.toString() ?? "0");
         const itemsPerLoad = parseInt(req.query.itemsPerLoad?.toString() ?? "0");
 
-        if (!profileId) {
-            throw "Profile ID is required";
-        }
-
         const results = await postService.getPosts(
-            userId, profileId as string,
+            userId, profileId || userId,
             postType as string, pageIndex, itemsPerLoad
         );
 

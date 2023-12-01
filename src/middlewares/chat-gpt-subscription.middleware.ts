@@ -12,8 +12,12 @@ export const chatGPTSubscriptionMiddleware: RequestHandler = async (req, res, ne
         const user: any = req.user;
         const userId = user["_id"];
 
-        const subscription = await UserSubscription.exists({ userId, subscribedUserId, status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED] });
-
+        const subscription = await UserSubscription.exists({
+            userId,
+            subscribedUserId,
+            status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED]
+        });
+        
         if (subscription != null) {
             return next();
         } else {

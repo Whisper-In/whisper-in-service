@@ -1,5 +1,5 @@
 
-import MulterGoogleCloudStorage from "multer-cloud-storage";
+import MulterGoogleCloudStorage from "multer-google-storage";
 import multer from "multer";
 import { googleCloudKeyFileName, googleStoragePostsBucketName, googleStorageProfileBucketName } from "../config/app.config.js";
 import path from "path";
@@ -28,12 +28,12 @@ export const profileUploadHandler = (props?: { folderName?: string, fileName?: s
         ...defaultStorageConfig,
         bucket: googleStorageProfileBucketName,
         filename: (req: any, file: any, cb: any) => {
-            const userId = req.user["_id"];
+            const userId = req.user["_id"].toString();
 
             const fileName = props?.fileName ?? file.originalname;
 
             if (props?.folderName) {
-                cb(null, `${userId}/${props?.folderName}/${fileName}`);
+                cb(null, `${userId}/${props.folderName}/${fileName}`);
             } else {
                 cb(null, `${userId}/${fileName}`);
             }

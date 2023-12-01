@@ -3,9 +3,7 @@ import { openAIApiKey } from "../../config/app.config.js";
 import { CHAT_COMPLETION_TEMP } from "../../config/chatgpt.config.js";
 import { UserProfile } from "../../models/user/user-profile.model.js";
 
-const openai = new OpenAI({
-  apiKey: openAIApiKey
-});
+const openai = new OpenAI();
 
 export const getChatCompletion = async (
   profileId: string,
@@ -19,10 +17,10 @@ export const getChatCompletion = async (
       throw "Profile id provided does not exists.";
     }
 
-    const characterPrompt = await profile.characterPrompt;
+    const characterPrompt = await profile.characterPrompt
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo-0301",
+      model: "gpt-3.5-turbo-1106",
       messages: [
         {
           role: "system",
@@ -35,7 +33,6 @@ export const getChatCompletion = async (
         },
       ],
       temperature: CHAT_COMPLETION_TEMP,
-      
     });
 
     return completion.choices[0].message;

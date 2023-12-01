@@ -178,7 +178,7 @@ export const createPaymentSubscription: RequestHandler = async (req, res, next) 
         res.json(paymentIntent);
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ error });
+        return res.status(400).json({ error: "Payment failed" });
     }
 }
 

@@ -22,4 +22,5 @@ export interface IProfileDto {
     postCount?: number;
     followerCount?: number;
     totalLikeCount?: number;
+    isMe?: boolean;
 }

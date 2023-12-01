@@ -96,7 +96,8 @@ export const getProfile = async (queryUserId: string, userId: string) => {
                 isBlocked: isBlocked?._id != null,
                 followerCount,
                 postCount: postCounts?.postCount,
-                totalLikeCount: postCounts?.likeCount
+                totalLikeCount: postCounts?.likeCount,
+                isMe: userId == queryUserId
             }
         }
 

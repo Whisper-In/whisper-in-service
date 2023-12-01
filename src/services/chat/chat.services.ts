@@ -18,7 +18,7 @@ export const getUserChats = async (userId: string) => {
       },
       {
         $lookup: {
-          from: `${ChatMessage.modelName}s`.toLowerCase(),
+          from: ChatMessage.collection.name,
           localField: "_id",
           foreignField: "chatId",
           as: "lastMessage",
@@ -30,32 +30,24 @@ export const getUserChats = async (userId: string) => {
         }
       },
       {
+        $lookup: {
+          from: UserProfile.collection.name,
+          localField: "profiles.profile",
+          foreignField: "_id",
+          as: "profiles",          
+        }
+      },
+      {
         $project: {
           _id: false,
           chatId: "$_id",
           isAudioOn: true,
           lastMessage: { $last: "$lastMessage" },
-          profiles: true,
+          profile: {$first: "$profiles"},
         }
       }
     ]);
-
-    await Chat.populate(results, {
-      path: "profiles",
-      populate: {
-        path: "profile",
-        match: { _id: { $ne: userObjectId } }
-      }
-    });
-
-    results.forEach((r) => {
-      r.profiles = r.profiles
-        .filter((p: any) => p.profile != null)
-        .map((p: any) => ({
-          ...p.profile._doc
-        }));
-    });
-
+    
     return results;
   } catch (error) {
     throw error;
@@ -139,7 +131,7 @@ export const getChat = async (userId: string, chatId: string) => {
       createdAt: chat?.createdAt,
       updatedAt: chat?.updatedAt,
       isAudioOn: chat?.isAudioOn,
-      features
+      //features
     };
   } catch (error) {
     throw error;
@@ -204,12 +196,11 @@ export const createNewChat = async (userId: string, contactProfileId: string) =>
 export const insertNewChatMessage = async (
   chatId: string,
   senderId: string,
-  message: string
+  message: string,
+  isAudio?: boolean
 ) => {
   try {
     const chat = await Chat.findById(chatId);
-
-    console.log("senderId:", chatId, senderId, message)
 
     if (!chat?._id) {
       throw "Invalid chat id provided.";
@@ -225,7 +216,7 @@ export const insertNewChatMessage = async (
       chatId: new mongo.ObjectId(chatId),
       sender: new mongo.ObjectId(senderId),
       message,
-      isAudio: chat.isAudioOn
+      isAudio
     });
 
     const savedChatMessage = await newChatMessage.save();

@@ -119,7 +119,7 @@ export const getUserProfile = async (userId: string) => {
             _id: result?._id,
             name: result?.name,
             userName: result?.userName,
-            avatar: result?.avatar,
+            avatar: `${result?.avatar}?${Date.now()}`,
             email: result?.email,
             googleId: result?.googleId,
             stripeId: result?.stripeId,

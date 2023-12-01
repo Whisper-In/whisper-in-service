@@ -5,7 +5,7 @@ import {
     IUserProfile,
     IUserProfileMethods,
 } from "../../models/user/user-profile.model.js";
-import { appCallbackURL, appScheme } from "../../config/app.config.js";
+import { appCallbackURL, appScheme, frontendOrigin } from "../../config/app.config.js";
 
 export const appleCallback: RequestHandler = async (req, res, next) => {    
     const reqUser = <IUserProfile & IUserProfileMethods>req.user!;
@@ -39,6 +39,6 @@ export const appleWebCallback: RequestHandler = async (req, res, next) => {
     };    
 
     res.redirect(
-        `${appCallbackURL}?user=${JSON.stringify(user)}&token=${jwtToken}`
+        `${frontendOrigin}${appCallbackURL}?user=${JSON.stringify(user)}&token=${jwtToken}`
     );
 };

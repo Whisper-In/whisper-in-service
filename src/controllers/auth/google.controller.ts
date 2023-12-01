@@ -35,7 +35,8 @@ export const googleWebCallback: RequestHandler = async (req, res, next) => {
     name: reqUser.name,
     email: reqUser.email,
     avatar: reqUser.avatar,
-    isAgreeTnC: reqUser.isAgreeTnC
+    isAgreeTnC: reqUser.isAgreeTnC,
+    frontendOrigin
   };
 
   res.redirect(

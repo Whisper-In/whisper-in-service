@@ -13,7 +13,9 @@ export async function uploadFile(bucketName: string, filePath: string, buffer: B
         const bucket = storage.bucket(bucketName);
 
         const file = bucket.file(filePath);
-        await file.save(buffer);
+        await file.save(buffer, {
+            resumable: true
+        });
 
         return file;
     } catch (error) {

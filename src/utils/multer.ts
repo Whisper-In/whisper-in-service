@@ -6,7 +6,7 @@ import path from "path";
 import gcpKeyJson from "../../resources/gcp-key.json" assert {type: "json"};
 
 const defaultStorageConfig = {
-    autoRetry: true,
+    retryOptions: { autoRetry: true },
     projectId: gcpKeyJson.project_id,
     keyFilename: path.join(process.cwd(), 'resources', googleCloudKeyFileName),
 }
@@ -28,12 +28,12 @@ export const profileUploadHandler = (props?: { folderName?: string, fileName?: s
         ...defaultStorageConfig,
         bucket: googleStorageProfileBucketName,
         filename: (req: any, file: any, cb: any) => {
-            const userId = req.user["_id"];
+            const userId = req.user["_id"].toString();
 
             const fileName = props?.fileName ?? file.originalname;
 
             if (props?.folderName) {
-                cb(null, `${userId}/${props?.folderName}/${fileName}`);
+                cb(null, `${userId}/${props.folderName}/${fileName}`);
             } else {
                 cb(null, `${userId}/${fileName}`);
             }

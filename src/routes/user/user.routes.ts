@@ -26,5 +26,7 @@ router.put("/voice", [passportJWTMiddleware, upload.single("voice-sample")], use
 router.post('/payment-sheet', passportJWTMiddleware, userController.createPaymentSheet);
 router.post('/payment-subscription', passportJWTMiddleware, userController.createPaymentSubscription);
 router.post('/cancel-subscription', passportJWTMiddleware, userController.cancelSubscription);
+router.post("/follow/:profileId", passportJWTMiddleware, userController.followUser)
+router.delete("/follow/:profileId", passportJWTMiddleware, userController.unfollowUser)
 
 export default router;

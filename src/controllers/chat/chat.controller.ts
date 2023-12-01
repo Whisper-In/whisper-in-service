@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import * as chatService from "../../services/chat/chat.services.js";
 import * as chatGPTService from "../../services/chatgpt/chatgpt.services.js";
 import { ChatCompletionMessageParam } from "openai/resources/chat/index.mjs";
+import { Chat } from "../../models/chat/chat.model.js";
 
 export const getUserChats: RequestHandler = async (req, res, next) => {
   try {
@@ -34,10 +35,11 @@ export const getChat: RequestHandler = async (req, res, next) => {
 
 export const getChatMessages: RequestHandler = async (req, res, next) => {
   try {
+    const { _id } = <any>req.user;
     const { chatId } = req.params;
     const { pageIndex, messageCount } = req.query;
 
-    const results = await chatService.getChatMessages(chatId, Number.parseInt(pageIndex as string), Number.parseInt(messageCount as string));
+    const results = await chatService.getChatMessages(chatId, _id, Number.parseInt(pageIndex as string), Number.parseInt(messageCount as string));
 
     return res.status(200).json(results);
   } catch (error) {
@@ -76,9 +78,10 @@ export const updateChatProfileBlockStatus: RequestHandler = async (req, res, nex
 
 export const insertNewChatMessage: RequestHandler = async (req, res, next) => {
   try {
-    const { chatId, message, senderId } = req.body;
+    const { _id } = <any>req.user;
+    const { chatId, message, senderId, isAudio } = req.body;
 
-    const result = await chatService.insertNewChatMessage(chatId, senderId, message);
+    const result = await chatService.insertNewChatMessage(chatId, senderId ?? _id, message, isAudio);
 
     res.status(201).send(result);
   } catch (error) {
@@ -94,7 +97,7 @@ export const getChatCompletion: RequestHandler = async (req, res, next) => {
   let replyMessage = "";
 
   try {
-    const result = await chatService.getChatMessages(chatId, 0, 250);
+    const result = await chatService.getChatMessages(chatId, userId, 0, 250);
 
     const prevMessages = result.messages.map<ChatCompletionMessageParam>((message) => ({
       content: message.message,
@@ -109,10 +112,13 @@ export const getChatCompletion: RequestHandler = async (req, res, next) => {
       replyMessage = "ChatGPT returned empty content.";
     }
   } catch (error) {
+    console.log(error)
     replyMessage = "Sorry. Could you please repeat that?";
   }
 
-  const result = await chatService.insertNewChatMessage(chatId, profileId, replyMessage);
+  const chat = await Chat.findById(chatId);
+
+  const result = await chatService.insertNewChatMessage(chatId, profileId, replyMessage, chat?.isAudioOn);
 
   res.status(200).json(result);
 }

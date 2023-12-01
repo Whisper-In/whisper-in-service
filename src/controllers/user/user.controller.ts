@@ -149,7 +149,7 @@ export const createPaymentSubscription: RequestHandler = async (req, res, next) 
         const userProfile = await UserProfile.findById(userId);
 
         const metadata: { userId: string, profileId: string } = { userId, profileId };
-        
+
         const subscriptionProfile = await UserProfile.findById(metadata.profileId);
 
         if (!subscriptionProfile) {
@@ -178,7 +178,7 @@ export const createPaymentSubscription: RequestHandler = async (req, res, next) 
         res.json(paymentIntent);
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ error });
+        return res.status(400).json({ error: "Payment failed" });
     }
 }
 
@@ -218,5 +218,31 @@ export const cancelSubscription: RequestHandler = async (req, res, next) => {
     } catch (error) {
         console.log(error);
         return res.status(400).json({ error });
+    }
+}
+
+export const followUser: RequestHandler = async (req, res, next) => {
+    const { _id } = <any>req.user;
+    const { profileId } = req.params;
+
+    try {
+        const result = await userService.followUser(_id, profileId);
+
+        res.status(200).end();
+    } catch (error) {
+        res.status(400).json({ error })
+    }
+}
+
+export const unfollowUser: RequestHandler = async (req, res, next) => {
+    const { _id } = <any>req.user;
+    const { profileId } = req.params;
+
+    try {
+        const result = await userService.unfollowUser(_id, profileId);
+
+        res.status(200).end();
+    } catch (error) {
+        res.status(400).json({ error })
     }
 }

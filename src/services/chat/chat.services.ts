@@ -1,7 +1,7 @@
 import { Chat } from "../../models/chat/chat.model.js";
 import { mongo } from "mongoose";
 import { ChatMessage } from "../../models/chat/chat-message.model.js";
-import { UserProfile } from "../../models/user/user-profile.model.js";
+import { IUserProfile, UserProfile } from "../../models/user/user-profile.model.js";
 import { isFulfilled } from "../../utils/promise.js";
 import { SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model.js";
 import axios from "axios";
@@ -18,7 +18,7 @@ export const getUserChats = async (userId: string) => {
       },
       {
         $lookup: {
-          from: `${ChatMessage.modelName}s`.toLowerCase(),
+          from: ChatMessage.collection.name,
           localField: "_id",
           foreignField: "chatId",
           as: "lastMessage",
@@ -30,32 +30,24 @@ export const getUserChats = async (userId: string) => {
         }
       },
       {
+        $lookup: {
+          from: UserProfile.collection.name,
+          localField: "profiles.profile",
+          foreignField: "_id",
+          as: "profiles",          
+        }
+      },
+      {
         $project: {
           _id: false,
           chatId: "$_id",
           isAudioOn: true,
           lastMessage: { $last: "$lastMessage" },
-          profiles: true,
+          profile: {$first: "$profiles"},
         }
       }
     ]);
-
-    await Chat.populate(results, {
-      path: "profiles",
-      populate: {
-        path: "profile",
-        match: { _id: { $ne: userObjectId } }
-      }
-    });
-
-    results.forEach((r) => {
-      r.profiles = r.profiles
-        .filter((p: any) => p.profile != null)
-        .map((p: any) => ({
-          ...p.profile._doc
-        }));
-    });
-
+    
     return results;
   } catch (error) {
     throw error;
@@ -110,58 +102,43 @@ export const getChat = async (userId: string, chatId: string) => {
           populate: {
             path: "profile",
             match: { _id: { $ne: userObjectId } },
+            select: {
+              id: 1,
+              name: 1,
+              avatar: 1,
+              isBlocked: 1,
+              isSubscriptionOn: 1,
+              priceTiers: 1
+            }
           }
         }
       ]);
 
-    const contactProfileIDs = chat?.profiles
-      .filter((profile) => profile.profile != null)
-      .map((profile) => profile.profile._id.toString());
+    const profile: IUserProfile = <any>chat?.profiles.find((p) => p.profile != null)?.profile;
 
     const features: string[] = [];
 
-    if (contactProfileIDs?.length) {
-      const queries = await Promise.allSettled([
-        UserSubscription.find({ userId, subscribedUserId: { $in: contactProfileIDs }, status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED] }),
-        UserProfile.find({ _id: { $in: contactProfileIDs } })
-      ]);
+    const userSubscription = await UserSubscription.findOne({ userId, subscribedUserId: profile?._id, status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED] });
+    const priceTier = profile.priceTiers.find((priceTier) => priceTier.tier == userSubscription?.tier);
 
-      if (isFulfilled(queries[0]) && isFulfilled(queries[1])) {
-        const userSubscriptions = queries[0].value;
-
-        if (userSubscriptions?.length) {
-          const profiles = queries[1].value;
-
-          profiles.forEach((profile) => {
-            const subscriptions = userSubscriptions.find((subscription) => subscription.subscribedUserId == profile.id);
-            const priceTier = profile.priceTiers.find((priceTier) => priceTier.tier == subscriptions?.tier);
-
-            if (priceTier) {
-              features.push(...priceTier.features);
-            }
-          });
-        }
-      }
+    if (priceTier) {
+      features.push(...priceTier.features);
     }
 
     return {
       chatId: chat?.id,
-      profiles: chat?.profiles.filter((p) => p.profile != null).map((p: any) => ({
-        _id: p.profile.id,
-        name: p.profile.name,
-        avatar: p.profile.avatar,
-        isBlocked: p.blocked
-      })),
+      profile,
       createdAt: chat?.createdAt,
       updatedAt: chat?.updatedAt,
-      features
+      isAudioOn: chat?.isAudioOn,
+      //features
     };
   } catch (error) {
     throw error;
   }
 };
 
-export const getChatMessages = async (chatId: string, pageIndex: number, messageCount: number) => {
+export const getChatMessages = async (chatId: string, userId: string, pageIndex: number, messageCount: number) => {
   try {
     const chatObjectId = new mongo.ObjectId(chatId);
 
@@ -176,6 +153,7 @@ export const getChatMessages = async (chatId: string, pageIndex: number, message
         messageId: m._id,
         message: m.message,
         sender: m.sender,
+        isSender: m.sender.toString() == userId,
         isAudio: m.isAudio,
         createdAt: m.createdAt,
         updatedAt: m.updatedAt
@@ -187,6 +165,7 @@ export const getChatMessages = async (chatId: string, pageIndex: number, message
       totalMessages
     };
   } catch (error) {
+    console.log(error)
     throw error;
   }
 };
@@ -217,7 +196,8 @@ export const createNewChat = async (userId: string, contactProfileId: string) =>
 export const insertNewChatMessage = async (
   chatId: string,
   senderId: string,
-  message: string
+  message: string,
+  isAudio?: boolean
 ) => {
   try {
     const chat = await Chat.findById(chatId);
@@ -236,7 +216,7 @@ export const insertNewChatMessage = async (
       chatId: new mongo.ObjectId(chatId),
       sender: new mongo.ObjectId(senderId),
       message,
-      isAudio: chat.isAudioOn
+      isAudio
     });
 
     const savedChatMessage = await newChatMessage.save();

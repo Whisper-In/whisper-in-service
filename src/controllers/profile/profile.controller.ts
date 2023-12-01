@@ -16,10 +16,10 @@ export const getProfile: RequestHandler = async (req, res, next) => {
 };
 
 export const searchProfiles: RequestHandler = async (req, res, next) => {
-  const { query } = req.params;
-
+  const { query } = req.query;
+  
   try {
-    const results = await profileService.searchProfiles(query);
+    const results = await profileService.searchProfiles(<string>query);
 
     res.status(200).json(results);
   } catch (error) {

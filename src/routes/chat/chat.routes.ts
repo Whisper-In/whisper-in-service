@@ -12,7 +12,7 @@ router.post("/user-chats/new-chat", passportJWTMiddleware, chatController.create
 router.put("/block-profile", passportJWTMiddleware, chatController.updateChatProfileBlockStatus);
 router.post("/chat-completion-vector-db", passportJWTMiddleware, chatController.getChatCompletionWithVectorDB);
 router.post("/chat-completion", [passportJWTMiddleware, chatGPTSubscriptionMiddleware], chatController.getChatCompletion);
-router.route("/chat-messages/:chatId").get(chatController.getChatMessages);
-router.route("/chat-messages/message").post(chatController.insertNewChatMessage);
+router.post("/chat-messages/message", passportJWTMiddleware, chatController.insertNewChatMessage);
+router.get("/chat-messages/:chatId", passportJWTMiddleware, chatController.getChatMessages);
 
 export default router;

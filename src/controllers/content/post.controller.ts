@@ -10,12 +10,8 @@ export const getPosts: RequestHandler = async (req, res, next) => {
         const pageIndex = parseInt(req.query.pageIndex?.toString() ?? "0");
         const itemsPerLoad = parseInt(req.query.itemsPerLoad?.toString() ?? "0");
 
-        if (!profileId) {
-            throw "Profile ID is required";
-        }
-
         const results = await postService.getPosts(
-            userId, profileId as string,
+            userId, profileId || userId,
             postType as string, pageIndex, itemsPerLoad
         );
 
@@ -74,11 +70,10 @@ export const getRecommendedPosts: RequestHandler = async (req, res, next) => {
     try {
         const user: any = req.user;
         const userId = user["_id"];
-        const filterPostIds = req.query.filterPostIds;
         const showFollowingOnly: boolean = req.query.showFollowingOnly == "true";
         let size = req.query.size ? parseInt(req.query.size as string) : 5;
 
-        const results = await postService.getRecommendedPosts(userId, size, filterPostIds as string[], showFollowingOnly);
+        const results = await postService.getRecommendedPosts(userId, size, showFollowingOnly);
 
         return res.status(200).send(results);
     } catch (error) {

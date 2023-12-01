@@ -1,9 +1,10 @@
 node_modules/
 dist/
 datasets/sample-posts
+services
 
 .env
-.env-*
+.env.old
 .env.development
 
 *.code-workspace

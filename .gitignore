@@ -1,7 +1,7 @@
 node_modules/
 dist/
 datasets/sample-posts
-services
+services/
 
 .env
 .env.old

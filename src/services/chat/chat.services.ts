@@ -5,7 +5,6 @@ import { IUserProfile, UserProfile } from "../../models/user/user-profile.model.
 import { isFulfilled } from "../../utils/promise.js";
 import { SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model.js";
 import axios from "axios";
-import { whisperinChatServiceURL } from "../../config/app.config.js";
 
 export const getUserChats = async (userId: string) => {
   try {
@@ -232,27 +231,27 @@ export const getChatCompletionWithVectorDB = async (
   recipientUserId: string,
   userPrompt: string) => {
   try {
-    const recipient = await UserProfile.findById(recipientUserId);
+    // const recipient = await UserProfile.findById(recipientUserId);
 
-    if (!recipient) {
-      throw "Invalid repicipient user id.";
-    }
+    // if (!recipient) {
+    //   throw "Invalid repicipient user id.";
+    // }
 
-    const messageId = new mongo.ObjectId();
+    // const messageId = new mongo.ObjectId();
 
-    const result = await axios.post(`${whisperinChatServiceURL}/chat`, {
-      serviceId: "emb-qry-chat",
-      chatId,
-      recipientUserId,
-      messageId,
-      userPrompt,
-      systemPrompt: await recipient.characterPrompt
-    });
+    // const result = await axios.post(`${whisperinChatServiceURL}/chat`, {
+    //   serviceId: "emb-qry-chat",
+    //   chatId,
+    //   recipientUserId,
+    //   messageId,
+    //   userPrompt,
+    //   systemPrompt: await recipient.characterPrompt
+    // });
 
-    return {
-      messageId,
-      message: result.data
-    };
+    // return {
+    //   messageId,
+    //   message: result.data
+    // };
   } catch (error) {
     throw error;
   }

@@ -25,6 +25,11 @@ export const getRecommendedPosts = async (userId: string, size: number, showFoll
 
         const results = await Post.aggregate([
             {
+                $match: {
+                    creator: { $ne: new Types.ObjectId(userId) }
+                }
+            },
+            {
                 $match: matchContdition
             },
             {

@@ -5,7 +5,7 @@ import { frontendOrigin, httpsPort, port } from "./src/config/app.config.js";
 import chatGPTRouter from "./src/routes/chatgpt/chatgpt.routes.js";
 import chatRouter from "./src/routes/chat/chat.routes.js";
 import cors from "cors";
-import swaggerOutput from "./swagger_output.json" assert {type: "json"};
+import swaggerOutput from "./swagger_output.json";
 import googleRouter from "./src/routes/auth/google.routes.js";
 import appleRouter from "./src/routes/auth/apple.routes.js";
 import profileRouter from "./src/routes/profile/profile.routes.js";

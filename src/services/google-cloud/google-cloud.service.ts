@@ -1,7 +1,7 @@
 import { Storage } from "@google-cloud/storage";
 import path from "path";
 import { googleCloudKeyFileName } from "../../config/app.config.js";
-import gcpKeyJson from "../../../resources/gcp-demo-key.json";
+import gcpKeyJson from "../../../resources/gcp-key.json";
 
 const storage = new Storage({
     projectId: gcpKeyJson.project_id,

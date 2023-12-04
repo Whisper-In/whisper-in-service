@@ -289,6 +289,50 @@
         ]
       }
     },
+    "/chats/chat-messages/message": {
+      "post": {
+        "tags": [
+          "Chats"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "chatId": {
+                  "example": "any"
+                },
+                "message": {
+                  "example": "any"
+                },
+                "senderId": {
+                  "example": "any"
+                },
+                "isAudio": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/chats/chat-messages/{chatId}": {
       "get": {
         "tags": [
@@ -316,47 +360,6 @@
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/chats/chat-messages/message": {
-      "post": {
-        "tags": [
-          "Chats"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "chatId": {
-                  "example": "any"
-                },
-                "message": {
-                  "example": "any"
-                },
-                "senderId": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
           },
           "400": {
             "description": "Bad Request"

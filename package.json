@@ -3,14 +3,13 @@
   "version": "1.0.0",
   "description": "Whisper Backend Service",
   "main": "app.js",
-  "type": "module",
   "scripts": {
     "build": "npx tsc",
     "start": "node dist/app.js",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon dist/app.js\"",
     "test": "test",
-    "swagger": "node --loader ts-node/esm swagger.ts",
-    "insert-business-configs": "node --loader ts-node/esm ./scripts/business/business-configs.scripts.ts"
+    "swagger": "ts-node swagger.ts",
+    "insert-business-configs": "ts-node ./scripts/business/business-configs.scripts.ts"
   },
   "author": "",
   "license": "ISC",

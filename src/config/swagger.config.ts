@@ -1,5 +1,5 @@
 import { Options, SwaggerDefinition } from "swagger-jsdoc";
-import { httpsPort, port } from "./app.config.js";
+import { httpsPort, port } from "./app.config";
 
 export const swaggerOptions: Options = {
   info: {

@@ -3,7 +3,7 @@ import MulterGoogleCloudStorage from "multer-google-storage";
 import multer from "multer";
 import { googleCloudKeyFileName, googleStoragePostsBucketName, googleStorageProfileBucketName } from "../config/app.config.js";
 import path from "path";
-import gcpKeyJson from "../../resources/gcp-demo-key.json" assert {type: "json"};
+import gcpKeyJson from "../../resources/gcp-demo-key.json";
 
 const defaultStorageConfig = {
     retryOptions: { autoRetry: true },
@@ -12,7 +12,7 @@ const defaultStorageConfig = {
 }
 
 export const postUploadHandler = multer({
-    storage: MulterGoogleCloudStorage.storageEngine({
+    storage: new MulterGoogleCloudStorage({
         ...defaultStorageConfig,
         bucket: googleStoragePostsBucketName,
         filename: (req: any, file: any, cb: any) => {
@@ -24,7 +24,7 @@ export const postUploadHandler = multer({
 });
 
 export const profileUploadHandler = (props?: { folderName?: string, fileName?: string }) => multer({
-    storage: MulterGoogleCloudStorage.storageEngine({
+    storage: new MulterGoogleCloudStorage({
         ...defaultStorageConfig,
         bucket: googleStorageProfileBucketName,
         filename: (req: any, file: any, cb: any) => {

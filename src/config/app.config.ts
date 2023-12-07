@@ -35,3 +35,4 @@ export const googleStoragePostsBucketName = <string>process.env.GOOGLE_STORAGE_P
 export const googleStorageProfileBucketName = <string>process.env.GOOGLE_STORAGE_PROFILE_BUCKET_NAME;
 export const googleCloudKeyFileName= <string>process.env.GOOGLE_CLOUD_KEYFILE_NAME;
 export const frontendOrigin=<string>process.env.FRONTEND_ORIGIN;
+export const NODE_ENV=<string>process.env.NODE_ENV;

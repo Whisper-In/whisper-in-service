@@ -1,25 +1,26 @@
 import express from "express";
 import swaggerUi from "swagger-ui-express";
-import { connectMongoDB } from "./src/database/mongodb.js";
-import { frontendOrigin, httpsPort, port } from "./src/config/app.config.js";
-import chatGPTRouter from "./src/routes/chatgpt/chatgpt.routes.js";
-import chatRouter from "./src/routes/chat/chat.routes.js";
+import { connectMongoDB } from "./src/database/mongodb";
+import { frontendOrigin, httpsPort, port } from "./src/config/app.config";
+import chatGPTRouter from "./src/routes/chatgpt/chatgpt.routes";
+import chatRouter from "./src/routes/chat/chat.routes";
 import cors from "cors";
 import swaggerOutput from "./swagger_output.json";
-import googleRouter from "./src/routes/auth/google.routes.js";
-import appleRouter from "./src/routes/auth/apple.routes.js";
-import profileRouter from "./src/routes/profile/profile.routes.js";
-import paymentRouter from "./src/routes/payment/payment.routes.js";
-import userRouter from "./src/routes/user/user.routes.js";
-import elevenLabsRouter from "./src/routes/elevenlabs/elevenlabs.routes.js";
-import reportRouter from "./src/routes/profile/report.routes.js";
-import postRouter from "./src/routes/content/post.routes.js";
-import configRouter from "./src/routes/business/config.routes.js";
-import { initPassport } from "./src/services/passport/initPassport.js";
-import { paymentWebhook } from "./src/controllers/payment/payment.controller.js";
+import googleRouter from "./src/routes/auth/google.routes";
+import appleRouter from "./src/routes/auth/apple.routes";
+import profileRouter from "./src/routes/profile/profile.routes";
+import paymentRouter from "./src/routes/payment/payment.routes";
+import userRouter from "./src/routes/user/user.routes";
+import elevenLabsRouter from "./src/routes/elevenlabs/elevenlabs.routes";
+import reportRouter from "./src/routes/profile/report.routes";
+import postRouter from "./src/routes/content/post.routes";
+import configRouter from "./src/routes/business/config.routes";
+import { initPassport } from "./src/services/passport/initPassport";
+import { paymentWebhook } from "./src/controllers/payment/payment.controller";
 import https from "https";
 import fs from "fs";
 import path from "path";
+import { IncomingMessage, Server, ServerResponse } from "http";
 
 const key = fs.readFileSync(path.join(process.cwd(), "resources", "ssl certs", "key.pem"))
 const cert = fs.readFileSync(path.join(process.cwd(), "resources", "ssl certs", "cert.pem"))
@@ -147,14 +148,10 @@ const start = async () => {
   try {
     await connectMongoDB();
 
-    app.listen(port, () => {
-      console.log(`Whisper In Service listening on port ${port}`);
-    });
-
     if (process.env.NODE_ENV == 'development') {
       //Create https server for testing in development
-      const server = https.createServer({ key, cert }, app);
-      server.listen(httpsPort, () => {
+      const httpsServer = https.createServer({ key, cert }, app);
+      httpsServer.listen(httpsPort, () => {
         console.log(`Whisper In Service listening on port ${httpsPort} with HTTPS`);
       });
     }
@@ -165,6 +162,11 @@ const start = async () => {
   }
 };
 
-start();
+const server = app.listen(port, () => {
+  console.log(`Whisper In Service listening on port ${port}`);
+  start();
+});
 
 export default app;
+
+export { server };

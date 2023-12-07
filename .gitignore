@@ -9,5 +9,6 @@ services/
 .env
 .env.old
 .env.development
+.env.test
 
 *.code-workspace

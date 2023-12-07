@@ -20,7 +20,8 @@
   "exclude": [
     "dist",
     "scripts",
-    "datasets"
+    "datasets",
+    "tests"
   ],
   "ts-node": {
     "experimentalSpecifierResolution": "node",

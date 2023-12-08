@@ -44,7 +44,7 @@ const appleVerification: AppleStrategy.VerifyFunctionWithRequest = async (req, a
   }
 }
 
-passport.use('apple', new AppleStrategy({
+export const AppleMobileStrategy = new AppleStrategy({
   clientID: appleSignInServiceID,
   teamID: appleTeamID,
   callbackURL: appleSignInCallbackURL,
@@ -52,9 +52,9 @@ passport.use('apple', new AppleStrategy({
   privateKeyLocation: path.join(process.cwd(), 'resources', appleSignInKeyFileName),
   scope: ['name', 'email'],
   passReqToCallback: true
-}, appleVerification));
+}, appleVerification);
 
-passport.use('apple-web', new AppleStrategy({
+export const AppleWebStrategy = new AppleStrategy({
   clientID: appleSignInServiceID,
   teamID: appleTeamID,
   callbackURL: appleSignInWebCallbackURL,
@@ -62,4 +62,4 @@ passport.use('apple-web', new AppleStrategy({
   privateKeyLocation: path.join(process.cwd(), 'resources', appleSignInKeyFileName),
   scope: ['name', 'email'],
   passReqToCallback: true
-}, appleVerification));
+}, appleVerification);

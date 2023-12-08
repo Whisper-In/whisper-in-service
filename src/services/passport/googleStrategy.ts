@@ -9,7 +9,7 @@ import { UserProfile } from "../../models/user/user-profile.model.js";
 import { googleCallbackURL, googleClientID, googleClientSecret, googleWebCallbackURL } from "../../config/app.config.js";
 import { IUserSubscription, SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model.js";
 
-const googleVerification = async (
+export const googleVerification = async (
   accessToken: string,
   refreshToken: string,
   profile: any,
@@ -25,7 +25,7 @@ const googleVerification = async (
       return done(null, existingUser);
     }
   } catch (error) {
-    console.log(error);
+    return done(error, false);
   }
 
   try {
@@ -37,34 +37,28 @@ const googleVerification = async (
       userName: (<string>profile.displayName).toLocaleLowerCase().replace(" ", "_"),
       avatar: profile.picture,
       gender: profile.gender,
-    }).save();   
+    }).save();
 
-    done(null, newUser);
+    return done(null, newUser);
   } catch (error) {
-    console.log(error);
+    return done(error, false);
   }
 };
 
-passport.use(
-  "google",
-  new GoogleStrategy(
-    {
-      clientID: googleClientID,
-      clientSecret: googleClientSecret,
-      callbackURL: googleCallbackURL,
-    },
-    googleVerification
-  )
+export const GoogleMobileStrategy = new GoogleStrategy(
+  {
+    clientID: googleClientID,
+    clientSecret: googleClientSecret,
+    callbackURL: googleCallbackURL,
+  },
+  googleVerification
 );
 
-passport.use(
-  "google-web",
-  new GoogleStrategy(
-    {
-      clientID: googleClientID,
-      clientSecret: googleClientSecret,
-      callbackURL: googleWebCallbackURL,
-    },
-    googleVerification
-  )
+export const GoogleWebStrategy = new GoogleStrategy(
+  {
+    clientID: googleClientID,
+    clientSecret: googleClientSecret,
+    callbackURL: googleWebCallbackURL,
+  },
+  googleVerification
 );

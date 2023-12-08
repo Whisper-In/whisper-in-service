@@ -3,8 +3,8 @@ import app from "../../../app";
 
 const request = supertest(app);
 
-describe("Business/Config Controller", () => {    
-    describe("Get Configuration API", () => {
+describe("/business/config.routes", () => {    
+    describe("GET /configuration", () => {
         it("should return subscription fee with 200", async () => {
             const response = await request
                 .get("/configuration/MIN_SUBSCRIPTION_FEE")

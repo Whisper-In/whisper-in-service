@@ -108,6 +108,10 @@ export const getProfile = async (queryUserId: string, userId: string) => {
 }
 
 export const searchProfiles = async (query: string) => {
+    if (!query) {
+        return []
+    }
+
     const regex = new RegExp(query, "i");
 
     try {
@@ -123,6 +127,6 @@ export const searchProfiles = async (query: string) => {
 
         return results;
     } catch (error) {
-
+        throw error;
     }
 }

@@ -30,10 +30,10 @@ export interface IUserProfile {
   googleId?: string;
   appleId?: string;
   stripeId?: string;
-  isAgreeTnC: boolean;
-  aiDescription: string;
+  isAgreeTnC?: boolean;
+  aiDescription?: string;
   characterPrompt: string;
-  isDefault: boolean;
+  isDefault?: boolean;
   priceTiers: IPriceTier[];
   stripeConnectedAccountId?: string;
   stripeCustomerId?: string;
@@ -83,10 +83,10 @@ export const UserProfileSchema = new Schema<IUserProfile, UserProfileModel, IUse
 
 UserProfileSchema.virtual("characterPrompt").get(async function () {
   const characterPrompt = await BusinessConfig.findOne({ configName: "BASE_CHARACTER_PROMPT" });
-  
+
   return characterPrompt?.configValue
     .replaceAll(namePlaceholder, this.name)
-    .replaceAll(descriptionPlaceholder, this.aiDescription);
+    .replaceAll(descriptionPlaceholder, (this.aiDescription) ?? "");
 });
 
 UserProfileSchema.virtual('posts', {

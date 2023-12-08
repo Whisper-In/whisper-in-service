@@ -3,13 +3,20 @@ import businessConfigJson from '../datasets/business-configs.datasets.json';
 import { disconnectMongDB } from "../src/database/mongodb";
 import mongoose from "mongoose";
 import { server } from "../app";
+import passport from "passport";
+
+//@ts-ignore
+global.console = {
+    ...global.console,
+    log: jest.fn()
+}
 
 const FILTER_COLLECTIONS = [
     BusinessConfig.collection.name
 ]
 
-beforeAll(async () => {        
-    await BusinessConfig.insertMany(businessConfigJson);   
+beforeAll(async () => {
+    await BusinessConfig.insertMany(businessConfigJson);
 });
 
 afterAll(async () => {

@@ -21,7 +21,7 @@
     "dist",
     "scripts",
     "datasets",
-    "tests"
+    "__tests__"
   ],
   "ts-node": {
     "experimentalSpecifierResolution": "node",

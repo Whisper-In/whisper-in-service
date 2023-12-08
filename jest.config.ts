@@ -4,7 +4,8 @@ const config: Config.InitialOptions = {
     transform: {
         '\\.[jt]sx?$': 'ts-jest'
     },
-    setupFilesAfterEnv: ["./tests/setup.js"],
+    testPathIgnorePatterns: ["/node_modules/", "./__tests__/setup.ts"],
+    setupFilesAfterEnv: ["./__tests__/setup.ts"],
     resolver: "jest-ts-webcompat-resolver"
 }
 

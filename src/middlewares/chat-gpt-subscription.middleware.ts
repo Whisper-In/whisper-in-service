@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
-import { SubscriptionStatus, UserSubscription } from "../models/user/user-subscriptions.model.js";
-import { insertNewChatMessage } from "../services/chat/chat.services.js";
+import { SubscriptionStatus, UserSubscription } from "../models/user/user-subscriptions.model";
+import { insertNewChatMessage } from "../services/chat/chat.services";
 
 export const chatGPTSubscriptionMiddleware: RequestHandler = async (req, res, next) => {
     const subscribedUserId = req.body.profileId;

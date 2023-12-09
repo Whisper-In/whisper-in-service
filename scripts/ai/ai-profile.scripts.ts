@@ -1,6 +1,6 @@
 import { connect } from "mongoose";
 import aiProfileJSON from "../../datasets/ai-profile.datasets.json" assert { type: "json" };
-import { UserProfile } from "../../src/models/user/user-profile.model.js";
+import { UserProfile } from "../../src/models/user/user-profile.model";
 import { exit } from "process";
 import dotenv from 'dotenv';
 

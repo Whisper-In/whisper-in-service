@@ -1,5 +1,5 @@
 import { RequestHandler, raw } from "express";
-import * as profileService from "../../services/profile/profile.services.js";
+import * as profileService from "../../services/profile/profile.services";
 
 export const getProfile: RequestHandler = async (req, res, next) => {
   const { profileId } = req.params;

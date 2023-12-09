@@ -1,10 +1,10 @@
 import { RequestHandler } from "express";
-import * as userService from "../../services/user/user.services.js";
-import * as googleCloudService from "../../services/google-cloud/google-cloud.service.js";
-import { googleStorageProfileBucketName, stripeSubscriptionProductId } from "../../config/app.config.js";
-import * as paymentService from "../../services/payment/payment.services.js";
-import { UserProfile } from "../../models/user/user-profile.model.js";
-import { SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model.js";
+import * as userService from "../../services/user/user.services";
+import * as googleCloudService from "../../services/google-cloud/google-cloud.service";
+import { googleStorageProfileBucketName, stripeSubscriptionProductId } from "../../config/app.config";
+import * as paymentService from "../../services/payment/payment.services";
+import { UserProfile } from "../../models/user/user-profile.model";
+import { SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model";
 
 export const createUserSubscription: RequestHandler = async (req, res, next) => {
     const profileId = <string>req.body.profileId;

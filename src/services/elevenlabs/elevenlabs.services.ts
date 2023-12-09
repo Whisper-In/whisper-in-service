@@ -1,5 +1,5 @@
 import axios from "axios";
-import { elevenLabsAPIKey, elevenLabsBaseURL } from "../../config/app.config.js";
+import { elevenLabsAPIKey, elevenLabsBaseURL } from "../../config/app.config";
 import fs from "fs";
 import { Stream } from "stream";
 

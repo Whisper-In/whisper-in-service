@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
-import * as elevenLabsService from "../../services/elevenlabs/elevenlabs.services.js";
-import { UserProfile } from "../../models/user/user-profile.model.js";
+import * as elevenLabsService from "../../services/elevenlabs/elevenlabs.services";
+import { UserProfile } from "../../models/user/user-profile.model";
 export const getTextToSpeech: RequestHandler = async (req, res, next) => {
     try {
         const profileId = req.params.profileId;

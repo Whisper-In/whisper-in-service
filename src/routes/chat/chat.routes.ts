@@ -1,7 +1,7 @@
 import express from "express";
-import * as chatController from "../../controllers/chat/chat.controller.js";
-import { passportJWTMiddleware } from "../../middlewares/passport-jwt.middleware.js";
-import { chatGPTSubscriptionMiddleware } from "../../middlewares/chat-gpt-subscription.middleware.js";
+import * as chatController from "../../controllers/chat/chat.controller";
+import { passportJWTMiddleware } from "../../middlewares/passport-jwt.middleware";
+import { chatGPTSubscriptionMiddleware } from "../../middlewares/chat-gpt-subscription.middleware";
 
 const router = express.Router();
 

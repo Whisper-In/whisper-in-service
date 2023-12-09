@@ -1,6 +1,6 @@
 import Stripe from "stripe";
-import { stripeCurrency, stripePublishableKey, stripeSecretKey, stripeWebhookSecret } from "../../config/app.config.js";
-import { BusinessConfig } from "../../models/business/business-configs.model.js";
+import { stripeCurrency, stripePublishableKey, stripeSecretKey, stripeWebhookSecret } from "../../config/app.config";
+import { BusinessConfig } from "../../models/business/business-configs.model";
 
 const stripe = new Stripe(stripeSecretKey, { apiVersion: "2022-11-15" });
 

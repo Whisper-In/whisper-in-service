@@ -1,7 +1,7 @@
 import { Schema, model, Model, ObjectId } from "mongoose";
 import jwt from "jsonwebtoken";
-import { jwtSecret } from "../../config/app.config.js";
-import { BusinessConfig } from "../business/business-configs.model.js";
+import { jwtSecret } from "../../config/app.config";
+import { BusinessConfig } from "../business/business-configs.model";
 
 const namePlaceholder = "{{assistantName}}";
 const descriptionPlaceholder = "{{description}}";

@@ -1,7 +1,7 @@
 import passport from "passport";
 import { Strategy as passportJWTStrategy, ExtractJwt } from "passport-jwt";
-import { UserProfile } from "../../models/user/user-profile.model.js";
-import { jwtSecret } from "../../config/app.config.js";
+import { UserProfile } from "../../models/user/user-profile.model";
+import { jwtSecret } from "../../config/app.config";
 
 export const JWTStrategy = new passportJWTStrategy(
   {

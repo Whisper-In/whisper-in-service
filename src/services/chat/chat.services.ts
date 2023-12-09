@@ -1,9 +1,9 @@
-import { Chat } from "../../models/chat/chat.model.js";
+import { Chat } from "../../models/chat/chat.model";
 import { mongo } from "mongoose";
-import { ChatMessage } from "../../models/chat/chat-message.model.js";
-import { IUserProfile, UserProfile } from "../../models/user/user-profile.model.js";
-import { isFulfilled } from "../../utils/promise.js";
-import { SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model.js";
+import { ChatMessage } from "../../models/chat/chat-message.model";
+import { IUserProfile, UserProfile } from "../../models/user/user-profile.model";
+import { isFulfilled } from "../../utils/promise";
+import { SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model";
 import axios from "axios";
 
 export const getUserChats = async (userId: string) => {

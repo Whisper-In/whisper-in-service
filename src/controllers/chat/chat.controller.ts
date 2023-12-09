@@ -1,8 +1,8 @@
 import { RequestHandler } from "express";
-import * as chatService from "../../services/chat/chat.services.js";
-import * as chatGPTService from "../../services/chatgpt/chatgpt.services.js";
+import * as chatService from "../../services/chat/chat.services";
+import * as chatGPTService from "../../services/chatgpt/chatgpt.services";
 import { ChatCompletionMessageParam } from "openai/resources/chat/index.mjs";
-import { Chat } from "../../models/chat/chat.model.js";
+import { Chat } from "../../models/chat/chat.model";
 
 export const getUserChats: RequestHandler = async (req, res, next) => {
   try {

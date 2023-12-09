@@ -1,7 +1,7 @@
 
 import MulterGoogleCloudStorage from "multer-google-storage";
 import multer from "multer";
-import { googleStoragePostsBucketName, googleStorageProfileBucketName } from "../config/app.config.js";
+import { googleStoragePostsBucketName, googleStorageProfileBucketName } from "../config/app.config";
 import path from "path";
 import gcpKeyJson from "../../resources/gcp-key.json";
 

@@ -1,4 +1,4 @@
-import { BusinessConfig } from "../../models/business/business-configs.model.js";
+import { BusinessConfig } from "../../models/business/business-configs.model";
 
 export const getConfig = async (configName: string) => {
     try {

@@ -1,11 +1,11 @@
 import { connect } from "mongoose";
-import { UserProfile } from "../../src/models/user/user-profile.model.js";
-import { AIProfile } from "../../src/models/ai/ai-profile.model.js";
-import { Chat } from "../../src/models/chat/chat.model.js";
+import { UserProfile } from "../../src/models/user/user-profile.model";
+import { AIProfile } from "../../src/models/ai/ai-profile.model";
+import { Chat } from "../../src/models/chat/chat.model";
 import {
   ChatMessage,
   IChatMessage,
-} from "../../src/models/chat/chat-message.model.js";
+} from "../../src/models/chat/chat-message.model";
 import { faker } from "@faker-js/faker";
 import { exit } from "process";
 

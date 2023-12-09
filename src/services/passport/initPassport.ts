@@ -1,11 +1,11 @@
 import { Express } from "express";
 import passport from "passport";
-import "./googleStrategy.js";
-import "./appleStrategy.js";
-import "./jwtStrategy.js";
-import { GoogleMobileStrategy, GoogleWebStrategy } from "./googleStrategy.js";
-import { AppleMobileStrategy, AppleWebStrategy } from "./appleStrategy.js";
-import { JWTStrategy } from "./jwtStrategy.js";
+import "./googleStrategy";
+import "./appleStrategy";
+import "./jwtStrategy";
+import { GoogleMobileStrategy, GoogleWebStrategy } from "./googleStrategy";
+import { AppleMobileStrategy, AppleWebStrategy } from "./appleStrategy";
+import { JWTStrategy } from "./jwtStrategy";
 
 export const initPassport = (app:Express) => {
     app.use(passport.initialize());    

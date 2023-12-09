@@ -1,8 +1,8 @@
 import express from "express";
-import { passportJWTMiddleware } from "../../middlewares/passport-jwt.middleware.js";
-import * as postController from "../../controllers/content/post.controller.js";
-import { postUploadHandler } from "../../utils/multer.js";
-import { multerUploadMiddleware } from "../../middlewares/multer.middleware.js";
+import { passportJWTMiddleware } from "../../middlewares/passport-jwt.middleware";
+import * as postController from "../../controllers/content/post.controller";
+import { postUploadHandler } from "../../utils/multer";
+import { multerUploadMiddleware } from "../../middlewares/multer.middleware";
 
 const router = express();
 

@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
-import { passportJWTMiddleware } from "../../middlewares/passport-jwt.middleware.js";
-import * as reportController from "../../controllers/profile/report.controller.js";
+import { passportJWTMiddleware } from "../../middlewares/passport-jwt.middleware";
+import * as reportController from "../../controllers/profile/report.controller";
 
 const router = express.Router();
 

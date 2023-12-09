@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import * as configService from "../../services/business/config.services.js";
+import * as configService from "../../services/business/config.services";
 
 export const getConfig: RequestHandler = async (req, res, next) => {
     try {

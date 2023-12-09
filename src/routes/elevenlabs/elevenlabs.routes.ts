@@ -1,8 +1,8 @@
 import express from "express";
-import { passportJWTMiddleware } from "../../middlewares/passport-jwt.middleware.js";
-import { getTextToSpeech } from "../../controllers/elevenlabs/elevenlabs.controller.js";
-import { subscriptionFeaturesMiddleware } from "../../middlewares/text-to-speech-subscription.middleware.js";
-import { TierChatFeature } from "../../models/user/user-profile.model.js";
+import { passportJWTMiddleware } from "../../middlewares/passport-jwt.middleware";
+import { getTextToSpeech } from "../../controllers/elevenlabs/elevenlabs.controller";
+import { subscriptionFeaturesMiddleware } from "../../middlewares/text-to-speech-subscription.middleware";
+import { TierChatFeature } from "../../models/user/user-profile.model";
 
 const router = express.Router();
 

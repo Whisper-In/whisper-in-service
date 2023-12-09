@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
-import * as paymentService from "../../services/payment/payment.services.js";
-import * as userService from "../../services/user/user.services.js";
-import { SubscriptionStatus } from "../../models/user/user-subscriptions.model.js";
+import * as paymentService from "../../services/payment/payment.services";
+import * as userService from "../../services/user/user.services";
+import { SubscriptionStatus } from "../../models/user/user-subscriptions.model";
 
 export const createPaymentSheet: RequestHandler = async (req, res, next) => {
     try {

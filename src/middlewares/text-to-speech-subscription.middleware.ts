@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
-import { SubscriptionStatus, UserSubscription } from "../models/user/user-subscriptions.model.js";
-import { isFulfilled } from "../utils/promise.js";
-import { TierChatFeature, UserProfile } from "../models/user/user-profile.model.js";
+import { SubscriptionStatus, UserSubscription } from "../models/user/user-subscriptions.model";
+import { isFulfilled } from "../utils/promise";
+import { TierChatFeature, UserProfile } from "../models/user/user-profile.model";
 
 export const subscriptionFeaturesMiddleware = (features: TierChatFeature[]): RequestHandler => {
     return async (req, res, next) => {

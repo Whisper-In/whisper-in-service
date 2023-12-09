@@ -1,6 +1,6 @@
 import express from "express";
 import passport from "passport";
-import { appleCallback, appleWebCallback } from "../../controllers/auth/apple.controller.js";
+import { appleCallback, appleWebCallback } from "../../controllers/auth/apple.controller";
 
 const router = express.Router();
 

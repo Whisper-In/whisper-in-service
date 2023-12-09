@@ -1,6 +1,6 @@
 import { connect } from "mongoose";
 import postsJSON from "../../datasets/post.datasets.json" assert { type: "json" };
-import { Post, PostType } from "../../src/models/content/post.model.js";
+import { Post, PostType } from "../../src/models/content/post.model";
 import { exit } from "process";
 import dotenv from 'dotenv';
 import { UserProfile } from "../../src/models/user/user-profile.model";

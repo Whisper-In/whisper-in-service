@@ -4,8 +4,8 @@ import { Model } from "mongoose";
 import {
   IUserProfile,
   IUserProfileMethods,
-} from "../../models/user/user-profile.model.js";
-import { appCallbackURL, appScheme, frontendOrigin } from "../../config/app.config.js";
+} from "../../models/user/user-profile.model";
+import { appCallbackURL, appScheme, frontendOrigin } from "../../config/app.config";
 
 export const googleCallback: RequestHandler = async (req, res, next) => {
   const reqUser = <IUserProfile & IUserProfileMethods>req.user!;

@@ -1,8 +1,8 @@
 import passport from "passport";
 import AppleStrategy from "passport-apple";
-import { appleSignInCallbackURL, appleSignInKeyFileName, appleSignInKeyID, appleSignInServiceID, appleSignInWebCallbackURL, appleTeamID } from "../../config/app.config.js";
+import { appleSignInCallbackURL, appleSignInKeyFileName, appleSignInKeyID, appleSignInServiceID, appleSignInWebCallbackURL, appleTeamID } from "../../config/app.config";
 import path from "path";
-import { UserProfile } from "../../models/user/user-profile.model.js";
+import { UserProfile } from "../../models/user/user-profile.model";
 import jwt from "jsonwebtoken";
 
 const appleVerification: AppleStrategy.VerifyFunctionWithRequest = async (req, accessToken, refreshToken, idToken, profile, cb) => {

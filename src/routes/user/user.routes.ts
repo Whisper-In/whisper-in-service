@@ -1,8 +1,8 @@
 import express from "express";
-import { passportJWTMiddleware } from "../../middlewares/passport-jwt.middleware.js";
-import * as userController from "../../controllers/user/user.controller.js";
-import { profileUploadHandler } from "../../utils/multer.js";
-import { multerUploadMiddleware } from "../../middlewares/multer.middleware.js";
+import { passportJWTMiddleware } from "../../middlewares/passport-jwt.middleware";
+import * as userController from "../../controllers/user/user.controller";
+import { profileUploadHandler } from "../../utils/multer";
+import { multerUploadMiddleware } from "../../middlewares/multer.middleware";
 import multer from "multer";
 
 const upload = multer();

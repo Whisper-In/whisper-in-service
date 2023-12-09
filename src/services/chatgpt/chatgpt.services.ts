@@ -1,7 +1,7 @@
 import OpenAI from "openai";
-import { openAIApiKey } from "../../config/app.config.js";
-import { CHAT_COMPLETION_TEMP } from "../../config/chatgpt.config.js";
-import { UserProfile } from "../../models/user/user-profile.model.js";
+import { openAIApiKey } from "../../config/app.config";
+import { CHAT_COMPLETION_TEMP } from "../../config/chatgpt.config";
+import { UserProfile } from "../../models/user/user-profile.model";
 
 const openai = new OpenAI();
 

@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import * as chatGPTService from "../../services/chatgpt/chatgpt.services.js";
+import * as chatGPTService from "../../services/chatgpt/chatgpt.services";
 
 export const getChatCompletion: RequestHandler = async (req, res, next) => {
   const { profileId, message, prevMessages } = req.body;

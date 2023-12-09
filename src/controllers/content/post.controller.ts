@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
-import * as postService from "../../services/content/post.service.js";
-import { appScheme } from "../../config/app.config.js";
+import * as postService from "../../services/content/post.service";
+import { appScheme } from "../../config/app.config";
 
 export const getPosts: RequestHandler = async (req, res, next) => {
     try {

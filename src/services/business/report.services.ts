@@ -1,9 +1,9 @@
-import { ReportReason } from "../../models/profile/report-reason.model.js";
+import { ReportReason } from "../../models/profile/report-reason.model";
 import nodeMailer from "nodemailer";
-import { UserProfile } from "../../models/user/user-profile.model.js";
-import { isFulfilled } from "../../utils/promise.js";
-import { nodeMailerHost, nodeMailerPass, nodeMailerPort, nodeMailerReceiver, nodeMailerUser } from "../../config/app.config.js";
-import Mail from "nodemailer/lib/mailer/index.js";
+import { UserProfile } from "../../models/user/user-profile.model";
+import { isFulfilled } from "../../utils/promise";
+import { nodeMailerHost, nodeMailerPass, nodeMailerPort, nodeMailerReceiver, nodeMailerUser } from "../../config/app.config";
+import Mail from "nodemailer/lib/mailer/index";
 
 export const getReportReasons = async () => {
     try {

@@ -1,13 +1,13 @@
 import { Types, mongo } from "mongoose";
-import { IProfileDto } from "../../dtos/profile/profile.dtos.js";
-import { UserProfile } from "../../models/user/user-profile.model.js";
-import { SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model.js";
-import { Chat } from "../../models/chat/chat.model.js";
-import { isFulfilled } from "../../utils/promise.js";
-import { Post } from "../../models/content/post.model.js";
-import { UserLikedPost } from "../../models/content/user-liked-post.model.js";
-import { BusinessConfig } from "../../models/business/business-configs.model.js";
-import { UserFollowing } from "../../models/user/user-following.model.js";
+import { IProfileDto } from "../../dtos/profile/profile.dtos";
+import { UserProfile } from "../../models/user/user-profile.model";
+import { SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model";
+import { Chat } from "../../models/chat/chat.model";
+import { isFulfilled } from "../../utils/promise";
+import { Post } from "../../models/content/post.model";
+import { UserLikedPost } from "../../models/content/user-liked-post.model";
+import { BusinessConfig } from "../../models/business/business-configs.model";
+import { UserFollowing } from "../../models/user/user-following.model";
 
 export const getProfile = async (queryUserId: string, userId: string) => {
     try {

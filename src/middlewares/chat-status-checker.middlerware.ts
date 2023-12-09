@@ -1,6 +1,6 @@
 import { Types, mongo } from "mongoose";
 import { RequestHandler } from "express";
-import { Chat } from "../models/chat/chat.model.js";
+import { Chat } from "../models/chat/chat.model";
 
 export const chatBlockedMiddleware: RequestHandler = async (req, res, next) => {
     const aiProfileId = req.body.aiProfileId;

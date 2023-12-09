@@ -4,10 +4,10 @@ import {
   Strategy as GoogleStrategy,
   VerifyCallback,
 } from "passport-google-oauth2";
-import { Chat, IChat } from "../../models/chat/chat.model.js";
-import { UserProfile } from "../../models/user/user-profile.model.js";
-import { googleCallbackURL, googleClientID, googleClientSecret, googleWebCallbackURL } from "../../config/app.config.js";
-import { IUserSubscription, SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model.js";
+import { Chat, IChat } from "../../models/chat/chat.model";
+import { UserProfile } from "../../models/user/user-profile.model";
+import { googleCallbackURL, googleClientID, googleClientSecret, googleWebCallbackURL } from "../../config/app.config";
+import { IUserSubscription, SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model";
 
 export const googleVerification = async (
   accessToken: string,

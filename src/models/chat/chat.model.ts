@@ -1,5 +1,5 @@
 import { Schema, model, Types } from "mongoose";
-import { UserProfile } from "../user/user-profile.model.js";
+import { UserProfile } from "../user/user-profile.model";
 
 export interface IChatProfile {
   profile: Types.ObjectId;

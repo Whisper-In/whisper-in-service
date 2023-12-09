@@ -1,5 +1,5 @@
 import { Schema, Types, model } from "mongoose";
-import { UserProfile } from "./user-profile.model.js";
+import { UserProfile } from "./user-profile.model";
 
 export enum SubscriptionStatus {
     PENDING,

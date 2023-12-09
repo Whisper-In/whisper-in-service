@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import * as reportService from "../../services/business/report.services.js"
+import * as reportService from "../../services/business/report.services"
 
 export const getReportReasons: RequestHandler = async (req, res, next) => {
     try {

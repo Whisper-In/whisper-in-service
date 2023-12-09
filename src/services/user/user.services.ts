@@ -1,14 +1,14 @@
-import { SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model.js";
-import { IUserProfile, TierChatFeature, UserProfile } from "../../models/user/user-profile.model.js";
-import { BusinessConfig } from "../../models/business/business-configs.model.js";
-import * as elevenLabsService from "../../services/elevenlabs/elevenlabs.services.js";
-import { multerUploadMiddleware } from "../../middlewares/multer.middleware.js";
-import { profileUploadHandler } from "../../utils/multer.js";
+import { SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model";
+import { IUserProfile, TierChatFeature, UserProfile } from "../../models/user/user-profile.model";
+import { BusinessConfig } from "../../models/business/business-configs.model";
+import * as elevenLabsService from "../../services/elevenlabs/elevenlabs.services";
+import { multerUploadMiddleware } from "../../middlewares/multer.middleware";
+import { profileUploadHandler } from "../../utils/multer";
 import multer from "multer";
-import { Post } from "../../models/content/post.model.js";
-import { UserLikedPost } from "../../models/content/user-liked-post.model.js";
-import { isFulfilled } from "../../utils/promise.js";
-import { UserFollowing } from "../../models/user/user-following.model.js";
+import { Post } from "../../models/content/post.model";
+import { UserLikedPost } from "../../models/content/user-liked-post.model";
+import { isFulfilled } from "../../utils/promise";
+import { UserFollowing } from "../../models/user/user-following.model";
 
 export const createUserSubscription = async (userId: string, profileId: string, tier: number, stripeSubscriptionId?: string) => {
     try {

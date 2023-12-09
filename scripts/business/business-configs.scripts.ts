@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import { connect } from 'mongoose';
 import { BusinessConfig } from '../../src/models/business/business-configs.model.js';
 import { exit } from 'process';
-import businessConfigJson from '../../datasets/business-configs.datasets.json' assert { type: "json" };
+import businessConfigJson from '../../datasets/business-configs.datasets.json';
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
 

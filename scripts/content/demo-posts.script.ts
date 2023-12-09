@@ -1,9 +1,9 @@
 import fs from "fs";
 import mongoose from "mongoose";
 import path from "path";
-import { UserProfile } from "../../src/models/user/user-profile.model.js";
-import { Post, PostType } from "../../src/models/content/post.model.js";
-import { uploadFile } from "../../src/services/google-cloud/google-cloud.service.js";
+import { UserProfile } from "../../src/models/user/user-profile.model";
+import { Post, PostType } from "../../src/models/content/post.model";
+import { uploadFile } from "../../src/services/google-cloud/google-cloud.service";
 import Ffmpeg from "fluent-ffmpeg";
 import dotenv from "dotenv";
 

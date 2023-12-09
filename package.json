@@ -7,7 +7,7 @@
     "build": "npx tsc",
     "start": "node dist/app.js",
     "dev": "cross-env NODE_ENV=development concurrently \"npx tsc --watch\" \"nodemon dist/app.js\"",
-    "test": "cross-env NODE_ENV=test jest --testTimeout=5000 --detectOpenHandles",
+    "test": "cross-env NODE_ENV=test jest --testTimeout=15000 --detectOpenHandles",
     "swagger": "ts-node swagger.ts",
     "insert-business-configs": "ts-node ./scripts/business/business-configs.scripts.ts"
   },

@@ -45,7 +45,7 @@ export const mockProfiles: IUserProfile[] = [{
     priceTiers: []
 },
 {
-    _id: new mongo.ObjectId() as any,
+    _id: faker.database.mongodbObjectId() as any,
     birthday: faker.date.past(),
     avatar: faker.internet.avatar(),
     gender: faker.person.gender(),
@@ -56,7 +56,7 @@ export const mockProfiles: IUserProfile[] = [{
     priceTiers: []
 },
 {
-    _id: new mongo.ObjectId() as any,
+    _id: faker.database.mongodbObjectId() as any,
     birthday: faker.date.past(),
     avatar: faker.internet.avatar(),
     gender: faker.person.gender(),

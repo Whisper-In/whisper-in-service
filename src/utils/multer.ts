@@ -15,7 +15,7 @@ export const postUploadHandler = multer({
     storage: new MulterGoogleCloudStorage({
         ...defaultStorageConfig,
         bucket: googleStoragePostsBucketName,
-        filename: (req: any, file: any, cb: any) => {
+        filename: (req: any, file: any, cb: any) => {            
             const userId = req.user["_id"];
 
             cb(null, `${userId}/${Date.now()}_post`);

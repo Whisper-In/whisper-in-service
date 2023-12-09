@@ -38,3 +38,15 @@ export async function deleteFile(bucketName: string, fileName: string) {
         throw error;
     }
 }
+
+export async function deleteAllFiles(bucketName: string) {
+    try {
+        const bucket = storage.bucket(bucketName);
+
+        await bucket.deleteFiles();
+
+    } catch (error) {
+        console.log("deleteFile:", error);
+        throw error;
+    }
+}

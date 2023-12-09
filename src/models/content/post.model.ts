@@ -9,8 +9,10 @@ export interface IPost {
   postURL: string;
   thumbnailURL: string;
   postType: string;
-  description: string;
+  description?: string;
   creator: ObjectId;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 const PostSchema = new Schema<IPost>({
@@ -22,7 +24,7 @@ const PostSchema = new Schema<IPost>({
     type: Schema.Types.ObjectId,
     ref: UserProfile.modelName,
   }
-});
+}, { timestamps: true });
 
 const Post = model("Post", PostSchema);
 

@@ -1,15 +1,19 @@
 import { Types, mongo } from "mongoose";
-import { Post, PostType } from "../../models/content/post.model.js"
-import { UserLikedPost } from "../../models/content/user-liked-post.model.js";
-import { SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model.js";
-import * as googleCloudService from "../../services/google-cloud/google-cloud.service.js";
-import { googleStoragePostsBucketName } from "../../config/app.config.js";
+import { Post, PostType } from "../../models/content/post.model"
+import { UserLikedPost } from "../../models/content/user-liked-post.model";
+import { SubscriptionStatus, UserSubscription } from "../../models/user/user-subscriptions.model";
+import * as googleCloudService from "../../services/google-cloud/google-cloud.service";
+import { googleStoragePostsBucketName } from "../../config/app.config";
 import ffmpeg from "fluent-ffmpeg";
 import fs from "fs";
-import { UserProfile } from "../../models/user/user-profile.model.js";
-import { UserFollowing } from "../../models/user/user-following.model.js";
+import { UserProfile } from "../../models/user/user-profile.model";
+import { UserFollowing } from "../../models/user/user-following.model";
 
 export const getRecommendedPosts = async (userId: string, size: number, showFollowingOnly?: boolean) => {
+    if(size == 0) {
+        return [];
+    }
+    
     try {
         const following = await UserFollowing.find({
             userId,
@@ -73,6 +77,10 @@ export const getPosts = async (
     userId: string, profileId: string, postType: string,
     pageIndex: number, itemsPerLoad: number
 ) => {
+    if (!itemsPerLoad) {
+        return [];
+    }
+
     try {
         const isFollowing = await UserSubscription.exists({
             userId,
@@ -97,11 +105,17 @@ export const getPosts = async (
                 }
             },
             {
+                $sort: { createdAt: -1, _id: -1 }
+            },
+            {
                 $skip: pageIndex * itemsPerLoad
             },
             {
+                $limit: itemsPerLoad
+            },
+            {
                 $lookup: {
-                    from: `${UserLikedPost.modelName}s`.toLowerCase(),
+                    from: UserLikedPost.collection.name,
                     localField: "_id",
                     foreignField: "postId",
                     as: "likes"
@@ -114,14 +128,10 @@ export const getPosts = async (
                     description: 1,
                     creator: 1,
                     isCreator: { $eq: ["$creator", new Types.ObjectId(userId)] },
-                    creatorModel: 1,
                     thumbnailURL: 1,
                     likeCount: { $size: "$likes" },
                     isLiked: { $in: [userId, "$likes.userId"] },
                 }
-            },
-            {
-                $limit: itemsPerLoad
             }
         ]);
 
@@ -204,15 +214,15 @@ export const createPost = async (userId: string, description: string, file: Expr
 
 export const deletePost = async (userId: string, postId: string) => {
     try {
-        const post = await Post.findById(postId);
-
-        const result = await Post.deleteMany({
+        const result = await Post.findOne({
             _id: postId,
             creator: userId
         });
 
-        if (post) {
-            let { postURL, thumbnailURL } = post;
+        if (result) {
+            await result.deleteOne();
+
+            let { postURL, thumbnailURL } = result;
             const promises: Promise<any>[] = [];
 
             if (postURL) {
@@ -290,7 +300,6 @@ export const getPostDetail = async (userId: string, postId: string) => {
                     description: 1,
                     creator: 1,
                     isCreator: { $eq: ["$creator", new Types.ObjectId(userId)] },
-                    creatorModel: 1,
                     thumbnailURL: 1,
                     likeCount: { $size: "$likes" },
                     isLiked: { $in: [userId, "$likes.userId"] },

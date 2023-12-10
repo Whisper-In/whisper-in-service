@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import { SubscriptionStatus, UserSubscription } from "../models/user/user-subscriptions.model";
 import { insertNewChatMessage } from "../services/chat/chat.services";
+import { ERROR_MESSAGE, SUBSCRIPTION_PROMPT } from "../config/chatgpt.config";
 
 export const chatGPTSubscriptionMiddleware: RequestHandler = async (req, res, next) => {
     const subscribedUserId = req.body.profileId;
@@ -21,10 +22,10 @@ export const chatGPTSubscriptionMiddleware: RequestHandler = async (req, res, ne
         if (subscription != null) {
             return next();
         } else {
-            replyMessage = "Sorry, please subscribe to my profile to chat with me.";
+            replyMessage = SUBSCRIPTION_PROMPT;
         }
     } catch (error) {
-        replyMessage = "Sorry. Could you please repeat that?";
+        replyMessage = ERROR_MESSAGE;
     }
 
     const result = await insertNewChatMessage(chatId, subscribedUserId, replyMessage);

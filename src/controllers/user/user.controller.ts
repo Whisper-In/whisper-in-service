@@ -129,10 +129,10 @@ export const createPaymentSheet: RequestHandler = async (req, res, next) => {
         });
 
         if (!userProfile?.stripeCustomerId) {
-            UserProfile.findOneAndUpdate({ _id: user["_id"] }, { stripeCustomerId: userProfile?.stripeCustomerId }).exec();
+            UserProfile.findOneAndUpdate({ _id: user["_id"] }, { stripeCustomerId: paymentIntent?.customer }).exec();
         }
 
-        res.json(paymentIntent);
+        res.status(200).json(paymentIntent);
     } catch (error) {
         console.log(error);
         return res.status(400).json({ error });
@@ -200,7 +200,7 @@ export const cancelSubscription: RequestHandler = async (req, res, next) => {
             if (subscription.stripeSubscriptionId) {
                 const stripeSubscription = await paymentService.getSubscription(subscription.stripeSubscriptionId);
 
-                if (stripeSubscription && stripeSubscription.status == 'active') {
+                if (stripeSubscription && stripeSubscription.status != 'canceled') {
                     const deletedSubscription = await paymentService.cancelSubscription(subscription.stripeSubscriptionId);
 
                     return res.status(200).json(deletedSubscription);
@@ -228,7 +228,7 @@ export const followUser: RequestHandler = async (req, res, next) => {
     try {
         const result = await userService.followUser(_id, profileId);
 
-        res.status(200).end();
+        res.status(201).end();
     } catch (error) {
         res.status(400).json({ error })
     }

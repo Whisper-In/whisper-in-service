@@ -75,12 +75,8 @@ export const getUserProfile = async (userId: string) => {
 
         let today = new Date();
 
-        const followerCountQuery = UserSubscription.count({
-            $and: [{
-                subscribedUserId: userId,
-                status: SubscriptionStatus[SubscriptionStatus.SUCCEEDED]
-            },
-            { $or: [{ expiryDate: { $gte: today } }, { expiryDate: { $exists: false } }] }]
+        const followerCountQuery = UserFollowing.count({
+            followedUserId: userId
         });
 
         const postCountsQuery = Post.aggregate([
@@ -164,12 +160,14 @@ export const updateUserProfile = async (userProfile: IUserProfile) => {
             userProfile.userName = userProfile.userName.toLowerCase();
         }
 
+        const { _id, avatar, email, voiceId, voiceSampleURL, ...update } = userProfile;
+
         const result = await UserProfile.findByIdAndUpdate(
-            { _id: userProfile._id },
-            userProfile,
+            { _id },
+            update,
             { new: true }
         );
-
+        
         return result;
     } catch (error) {
         throw error;

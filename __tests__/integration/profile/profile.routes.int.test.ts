@@ -1,4 +1,4 @@
-import { validSearchKeyword, mockProfiles, loginMockUserProfile, invalidSearchKeyword } from "../../mocks/profile.mocks";
+import { validSearchKeyword, mockProfiles, mockLoginProfile, invalidSearchKeyword } from "../../mocks/profile.mocks";
 import { IUserProfile, UserProfile } from "../../../src/models/user/user-profile.model";
 import supertest from "supertest";
 import app from "../../../app";
@@ -9,7 +9,7 @@ let token: string | undefined;
 
 describe("/profile/profile.routes", () => {
     beforeEach(async () => {
-        const loginUser = new UserProfile(loginMockUserProfile);
+        const loginUser = new UserProfile(mockLoginProfile);
         await loginUser.save();
 
         token = loginUser.generateJWT();

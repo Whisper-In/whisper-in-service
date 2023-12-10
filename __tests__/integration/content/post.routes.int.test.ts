@@ -1,12 +1,11 @@
 import supertest from "supertest";
 import { IUserProfile, IUserProfileMethods, UserProfile } from "../../../src/models/user/user-profile.model";
-import { loginMockUserProfile, mockProfiles } from "../../mocks/profile.mocks";
+import { mockLoginProfile, mockProfiles } from "../../mocks/profile.mocks";
 import app from "../../../app";
 import { createMockPosts, mockPhotoPath, mockVideoPath } from "../../mocks/post.mocks";
 import { Post, PostType } from "../../../src/models/content/post.model";
 import { Document, Schema } from "mongoose";
 import { faker } from "@faker-js/faker";
-import { Storage } from "@google-cloud/storage";
 import { deleteAllFiles } from "../../../src/services/google-cloud/google-cloud.service";
 import { googleStoragePostsBucketName, googleStorageProfileBucketName } from "../../../src/config/app.config";
 import { UserFollowing } from "../../../src/models/user/user-following.model";
@@ -20,7 +19,7 @@ let loginUser: Document<unknown, {}, IUserProfile> & Omit<IUserProfile & Require
 
 describe("/content/post.routes", () => {
     beforeEach(async () => {
-        loginUser = new UserProfile(loginMockUserProfile);
+        loginUser = new UserProfile(mockLoginProfile);
         await loginUser.save();
 
         token = loginUser.generateJWT();

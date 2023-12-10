@@ -19,7 +19,7 @@ export const googleMockProfile: LoginProfile = {
     picture: faker.internet.avatar()
 }
 
-export const loginMockUserProfile: IUserProfile = {
+export const mockLoginProfile: IUserProfile = {
     _id: faker.database.mongodbObjectId() as any,
     birthday: faker.date.past(),
     avatar: faker.internet.avatar(),
@@ -27,8 +27,20 @@ export const loginMockUserProfile: IUserProfile = {
     name: "Tester",
     email: "tester@gmail.com",
     userName: "tester",
+    aiDescription: faker.lorem.words(10),
+    voiceId: faker.string.alphanumeric(10),
+    voiceSampleURL: faker.internet.url(),
     characterPrompt: "",
-    priceTiers: []
+    bio: faker.lorem.words(10),
+    instagram: faker.internet.url(),
+    youtube: faker.internet.url(),
+    isSubscriptionOn: true,
+    stripeConnectedAccountId: faker.string.alphanumeric(),
+    priceTiers: [{
+        features: [],
+        price: 2,
+        tier: 0
+    }]
 }
 
 export const validSearchKeyword = "ar";

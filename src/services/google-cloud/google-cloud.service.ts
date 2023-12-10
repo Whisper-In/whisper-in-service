@@ -27,7 +27,7 @@ export async function uploadFile(bucketName: string, filePath: string, buffer: B
 export async function deleteFile(bucketName: string, fileName: string) {
     try {
         const bucket = storage.bucket(bucketName);
-        const file = bucket.file(fileName);    
+        const file = bucket.file(fileName);
 
         const exists = await file.exists()
         if (exists[0]) {
@@ -47,6 +47,26 @@ export async function deleteAllFiles(bucketName: string) {
 
     } catch (error) {
         console.log("deleteFile:", error);
+        throw error;
+    }
+}
+
+export async function fileExists(bucketName: string, filePath?: string) {
+    if(!filePath) {
+        return false;
+    }
+    
+    try {
+        const bucket = storage.bucket(bucketName);
+
+        const split = filePath.split("/")
+        const fileName = split[split.length - 1];
+        const file = bucket.file(fileName);
+
+        const exists = await file.exists();
+
+        return exists[0]
+    } catch (error) {
         throw error;
     }
 }

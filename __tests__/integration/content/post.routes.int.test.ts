@@ -399,6 +399,9 @@ describe("/content/post.routes", () => {
 
             expect(afterDeletePosts.length).toEqual(beforeDeletePosts.length - 1);
             expect(afterDeletePosts.find(p => p._id == deletePost._id)).toBeFalsy();
+
+            expect(response.body).toHaveProperty("_id");
+            expect(response.body._id).toEqual(deletePost.id);
         });
 
         it("should only delete post created by the requesting user", async () => {

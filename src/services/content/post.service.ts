@@ -220,7 +220,7 @@ export const deletePost = async (userId: string, postId: string) => {
         });
 
         if (result) {
-            await result.deleteOne();
+            const deletedResult = await result.deleteOne();
 
             let { postURL, thumbnailURL } = result;
             const promises: Promise<any>[] = [];

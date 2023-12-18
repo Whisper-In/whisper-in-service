@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import { connect } from 'mongoose';
-import { BusinessConfig } from '../../src/models/business/business-configs.model.js';
+import { BusinessConfig } from '../../src/models/business/business-configs.model';
 import { exit } from 'process';
 import businessConfigJson from '../../datasets/business-configs.datasets.json';
 

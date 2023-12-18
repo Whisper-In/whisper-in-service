@@ -101,7 +101,7 @@ export const getChatCompletion: RequestHandler = async (req, res, next) => {
 
     const prevMessages = result.messages.map<ChatCompletionMessageParam>((message) => ({
       content: message.message,
-      role: message.sender == userId ? "user" : "assistant"
+      role: message.isSender ? "user" : "assistant"
     }))
 
     const chatCompletionResult = await chatGPTService.getChatCompletion(profileId, message, prevMessages);
@@ -112,7 +112,6 @@ export const getChatCompletion: RequestHandler = async (req, res, next) => {
       replyMessage = "ChatGPT returned empty content.";
     }
   } catch (error) {
-    console.log(error)
     replyMessage = "Sorry. Could you please repeat that?";
   }
 

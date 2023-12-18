@@ -99,10 +99,12 @@ export const getChatCompletion: RequestHandler = async (req, res, next) => {
   try {
     const result = await chatService.getChatMessages(chatId, userId, 0, 250);
 
-    const prevMessages = result.messages.map<ChatCompletionMessageParam>((message) => ({
-      content: message.message,
-      role: message.isSender ? "user" : "assistant"
-    }))
+    const prevMessages = result.messages
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+      .map<ChatCompletionMessageParam>((message) => ({
+        content: message.message,
+        role: message.isSender ? "user" : "assistant"
+      }))
 
     const chatCompletionResult = await chatGPTService.getChatCompletion(profileId, message, prevMessages);
 
